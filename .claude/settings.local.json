@@ -6,7 +6,8 @@
       "Bash(chmod:*)",
       "Bash(./deploy.sh)",
       "Bash(git rm:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []
