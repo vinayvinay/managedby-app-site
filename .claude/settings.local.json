@@ -7,7 +7,9 @@
       "Bash(./deploy.sh)",
       "Bash(git rm:*)",
       "Bash(git commit:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
