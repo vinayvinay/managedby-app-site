@@ -47,14 +47,26 @@ echo "🌿 Switching to live branch..."
 if git show-ref --verify --quiet refs/heads/live; then
     git checkout live
     echo "✅ Switched to existing live branch"
+    
+    # Get list of commits to cherry-pick (everything since live branch diverged from master)
+    echo "🍒 Finding commits to cherry-pick from master..."
+    LAST_LIVE_COMMIT=$(git merge-base live master)
+    COMMITS_TO_PICK=$(git rev-list --reverse $LAST_LIVE_COMMIT..master)
+    
+    if [ -n "$COMMITS_TO_PICK" ]; then
+        echo "📝 Cherry-picking commits from master..."
+        for commit in $COMMITS_TO_PICK; do
+            echo "   🍒 Cherry-picking: $(git log --oneline -1 $commit)"
+            git cherry-pick $commit
+        done
+    else
+        echo "✅ Live branch is already up to date with master"
+    fi
 else
-    git checkout -b live
-    echo "✅ Created new live branch"
+    # Create new live branch from master
+    git checkout -b live master
+    echo "✅ Created new live branch from master"
 fi
-
-# Merge master into live
-echo "🔄 Merging master into live..."
-git merge master --no-edit
 
 # Create production-ready files with cache busting
 echo "⚡ Creating production-ready files..."
@@ -144,7 +156,7 @@ echo ""
 echo "🎉 Deployment complete!"
 echo "📋 Summary:"
 echo "   • Master branch: committed current changes"
-echo "   • Live branch: created with production-ready code"
+echo "   • Live branch: cherry-picked changes and created production-ready code"
 echo "   • Cache busting timestamp: $TIMESTAMP"
 echo "   • Minified files: styles.min.css, main.min.js"
 echo ""
