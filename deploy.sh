@@ -74,106 +74,36 @@ echo "⚡ Creating production-ready files..."
 # Generate timestamp for cache busting
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
-# Minify CSS (proper minification)
+# Minify CSS using clean-css
 echo "🎨 Minifying CSS..."
-if command_exists "npx"; then
-    # Try to use postcss with cssnano if available
-    if npx cssnano --version >/dev/null 2>&1; then
-        npx cssnano assets/css/styles.css assets/css/styles.min.css 2>/dev/null || {
-            # Fallback: comprehensive minification
-            cat assets/css/styles.css | \
-            tr '\n' ' ' | \
-            sed 's/\/\*[^*]*\*\///g' | \
-            sed 's/[[:space:]]\+/ /g' | \
-            sed 's/; /;/g' | \
-            sed 's/ {/{/g' | \
-            sed 's/} /}/g' | \
-            sed 's/: /:/g' | \
-            sed 's/, /,/g' | \
-            sed 's/ > />/g' | \
-            sed 's/ + /+/g' | \
-            sed 's/^ //g' | \
-            sed 's/ $//g' > assets/css/styles.min.css
-        }
+if command_exists "cleancss"; then
+    cleancss -o assets/css/styles.min.css assets/css/styles.css
+elif command_exists "npx"; then
+    if npx cleancss --version >/dev/null 2>&1; then
+        npx cleancss -o assets/css/styles.min.css assets/css/styles.css
     else
-        # Comprehensive minification fallback
-        cat assets/css/styles.css | \
-        tr '\n' ' ' | \
-        sed 's/\/\*[^*]*\*\///g' | \
-        sed 's/[[:space:]]\+/ /g' | \
-        sed 's/; /;/g' | \
-        sed 's/ {/{/g' | \
-        sed 's/} /}/g' | \
-        sed 's/: /:/g' | \
-        sed 's/, /,/g' | \
-        sed 's/ > />/g' | \
-        sed 's/ + /+/g' | \
-        sed 's/^ //g' | \
-        sed 's/ $//g' > assets/css/styles.min.css
+        echo "⚠️  Warning: No CSS minifier found, copying original file"
+        cp assets/css/styles.css assets/css/styles.min.css
     fi
 else
-    # Comprehensive minification fallback
-    cat assets/css/styles.css | \
-    tr '\n' ' ' | \
-    sed 's/\/\*[^*]*\*\///g' | \
-    sed 's/[[:space:]]\+/ /g' | \
-    sed 's/; /;/g' | \
-    sed 's/ {/{/g' | \
-    sed 's/} /}/g' | \
-    sed 's/: /:/g' | \
-    sed 's/, /,/g' | \
-    sed 's/ > />/g' | \
-    sed 's/ + /+/g' | \
-    sed 's/^ //g' | \
-    sed 's/ $//g' > assets/css/styles.min.css
+    echo "⚠️  Warning: No CSS minifier found, copying original file"
+    cp assets/css/styles.css assets/css/styles.min.css
 fi
 
-# Minify JavaScript (proper minification)
+# Minify JavaScript using terser
 echo "📜 Minifying JavaScript..."
-if command_exists "npx"; then
-    # Try to use terser if available
+if command_exists "terser"; then
+    terser assets/js/main.js -o assets/js/main.min.js -c -m
+elif command_exists "npx"; then
     if npx terser --version >/dev/null 2>&1; then
-        npx terser assets/js/main.js -o assets/js/main.min.js -c -m 2>/dev/null || {
-            # Fallback: comprehensive minification
-            cat assets/js/main.js | \
-            sed 's/\/\/.*$//g' | \
-            tr '\n' ' ' | \
-            sed 's/\/\*[^*]*\*\///g' | \
-            sed 's/[[:space:]]\+/ /g' | \
-            sed 's/; /;/g' | \
-            sed 's/ {/{/g' | \
-            sed 's/} /}/g' | \
-            sed 's/, /,/g' | \
-            sed 's/^ //g' | \
-            sed 's/ $//g' > assets/js/main.min.js
-        }
+        npx terser assets/js/main.js -o assets/js/main.min.js -c -m
     else
-        # Comprehensive minification fallback
-        cat assets/js/main.js | \
-        sed 's/\/\/.*$//g' | \
-        tr '\n' ' ' | \
-        sed 's/\/\*[^*]*\*\///g' | \
-        sed 's/[[:space:]]\+/ /g' | \
-        sed 's/; /;/g' | \
-        sed 's/ {/{/g' | \
-        sed 's/} /}/g' | \
-        sed 's/, /,/g' | \
-        sed 's/^ //g' | \
-        sed 's/ $//g' > assets/js/main.min.js
+        echo "⚠️  Warning: No JS minifier found, copying original file"
+        cp assets/js/main.js assets/js/main.min.js
     fi
 else
-    # Comprehensive minification fallback
-    cat assets/js/main.js | \
-    sed 's/\/\/.*$//g' | \
-    tr '\n' ' ' | \
-    sed 's/\/\*[^*]*\*\///g' | \
-    sed 's/[[:space:]]\+/ /g' | \
-    sed 's/; /;/g' | \
-    sed 's/ {/{/g' | \
-    sed 's/} /}/g' | \
-    sed 's/, /,/g' | \
-    sed 's/^ //g' | \
-    sed 's/ $//g' > assets/js/main.min.js
+    echo "⚠️  Warning: No JS minifier found, copying original file"
+    cp assets/js/main.js assets/js/main.min.js
 fi
 
 # Update index.html with cache-busted URLs and minified files
