@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(openssl req:*)",
+      "Bash(chmod:*)",
+      "Bash(./deploy.sh)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
