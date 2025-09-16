@@ -19,6 +19,9 @@ npx cleancss assets/css/styles.css -o docs/assets/css/styles.min.css
 cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o docs/assets/js/bundle.min.js
 npx terser assets/js/tailwind-config.js -o docs/assets/js/tailwind-config.min.js
 
+# Add .nojekyll to disable Jekyll processing
+touch docs/.nojekyll
+
 # Generate HTML
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 sed "s/styles\.css/styles.min.css/g; s/main\.js/bundle.min.js/g; /user-detection\|analytics\|hero-animation\|stage-selector/d; s/?v=[0-9]*/?v=$TIMESTAMP/g" index.html > docs/index.html
