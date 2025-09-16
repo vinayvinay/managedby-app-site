@@ -25,3 +25,4 @@ test-changes.js
 .Trashes
 ehthumbs.db
 Thumbs.dbbuild/
+build/

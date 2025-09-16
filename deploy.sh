@@ -51,17 +51,9 @@ mkdir -p build/assets/css build/assets/js build/assets/images
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 echo "⏰ Cache busting timestamp: $TIMESTAMP"
 
-# Copy required assets to build directory
-echo "📋 Copying required assets..."
+# Copy images (no processing needed)
+echo "📋 Copying images..."
 cp -r assets/images/* build/assets/images/
-
-# Copy only the JS files that are actually used in production
-echo "  → Copying required JS files..."
-cp assets/js/tailwind-config.js build/assets/js/
-cp assets/js/user-detection.js build/assets/js/
-cp assets/js/analytics.js build/assets/js/
-cp assets/js/hero-animation.js build/assets/js/
-cp assets/js/stage-selector.js build/assets/js/
 
 # Minify CSS
 echo "🎨 Minifying CSS..."
@@ -79,8 +71,11 @@ else
     cp assets/css/styles.css build/assets/css/styles.min.css
 fi
 
-# Minify JavaScript
-echo "📜 Minifying JavaScript..."
+# Minify individual JavaScript files
+echo "📜 Minifying JavaScript files..."
+
+# Minify main.js
+echo "  → Minifying main.js..."
 if command_exists "terser"; then
     terser assets/js/main.js -o build/assets/js/main.min.js -c -m
 elif command_exists "npx"; then
@@ -95,11 +90,34 @@ else
     cp assets/js/main.js build/assets/js/main.min.js
 fi
 
+# Minify other JS files that are referenced in HTML
+for jsfile in tailwind-config user-detection analytics hero-animation stage-selector; do
+    echo "  → Minifying ${jsfile}.js..."
+    if command_exists "terser"; then
+        terser assets/js/${jsfile}.js -o build/assets/js/${jsfile}.min.js -c -m
+    elif command_exists "npx"; then
+        if npx terser --version >/dev/null 2>&1; then
+            npx terser assets/js/${jsfile}.js -o build/assets/js/${jsfile}.min.js -c -m
+        else
+            echo "⚠️  Warning: No JS minifier found, copying original file"
+            cp assets/js/${jsfile}.js build/assets/js/${jsfile}.min.js
+        fi
+    else
+        echo "⚠️  Warning: No JS minifier found, copying original file"
+        cp assets/js/${jsfile}.js build/assets/js/${jsfile}.min.js
+    fi
+done
+
 # Create production index.html with updated asset references
 echo "🔄 Creating production index.html..."
 sed \
     -e "s/styles\.css?v=[^\"']*/styles.min.css?v=$TIMESTAMP/g" \
     -e "s/main\.js?v=[^\"']*/main.min.js?v=$TIMESTAMP/g" \
+    -e "s/tailwind-config\.js?v=[^\"']*/tailwind-config.min.js?v=$TIMESTAMP/g" \
+    -e "s/user-detection\.js?v=[^\"']*/user-detection.min.js?v=$TIMESTAMP/g" \
+    -e "s/analytics\.js?v=[^\"']*/analytics.min.js?v=$TIMESTAMP/g" \
+    -e "s/hero-animation\.js?v=[^\"']*/hero-animation.min.js?v=$TIMESTAMP/g" \
+    -e "s/stage-selector\.js?v=[^\"']*/stage-selector.min.js?v=$TIMESTAMP/g" \
     -e "s/?v=[0-9]\{8,\}/?v=$TIMESTAMP/g" \
     index.html > build/index.html
 
@@ -155,8 +173,8 @@ echo "🎉 Build complete!"
 echo "📋 Summary:"
 echo "   • Production files created in build/ directory"
 echo "   • Cache busting timestamp: $TIMESTAMP"
-echo "   • Minified files: build/assets/css/styles.min.css, build/assets/js/main.min.js"
-echo "   • Required JS files: tailwind-config.js, user-detection.js, analytics.js, hero-animation.js, stage-selector.js"
+echo "   • Minified CSS: styles.min.css"
+echo "   • Minified JS: main.min.js, tailwind-config.min.js, user-detection.min.js, analytics.min.js, hero-animation.min.js, stage-selector.min.js"
 echo "   • Production HTML: build/index.html"
 echo ""
 echo "🔧 Next steps:"
