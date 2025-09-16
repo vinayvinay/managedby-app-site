@@ -51,10 +51,17 @@ mkdir -p build/assets/css build/assets/js build/assets/images
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 echo "⏰ Cache busting timestamp: $TIMESTAMP"
 
-# Copy assets to build directory
-echo "📋 Copying assets..."
+# Copy required assets to build directory
+echo "📋 Copying required assets..."
 cp -r assets/images/* build/assets/images/
-cp -r assets/js/* build/assets/js/
+
+# Copy only the JS files that are actually used in production
+echo "  → Copying required JS files..."
+cp assets/js/tailwind-config.js build/assets/js/
+cp assets/js/user-detection.js build/assets/js/
+cp assets/js/analytics.js build/assets/js/
+cp assets/js/hero-animation.js build/assets/js/
+cp assets/js/stage-selector.js build/assets/js/
 
 # Minify CSS
 echo "🎨 Minifying CSS..."
@@ -149,6 +156,7 @@ echo "📋 Summary:"
 echo "   • Production files created in build/ directory"
 echo "   • Cache busting timestamp: $TIMESTAMP"
 echo "   • Minified files: build/assets/css/styles.min.css, build/assets/js/main.min.js"
+echo "   • Required JS files: tailwind-config.js, user-detection.js, analytics.js, hero-animation.js, stage-selector.js"
 echo "   • Production HTML: build/index.html"
 echo ""
 echo "🔧 Next steps:"
