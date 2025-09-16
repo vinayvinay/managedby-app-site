@@ -33,6 +33,7 @@ TIMESTAMP=$(date +%Y%m%d%H%M%S)
 # First pass: update asset references and timestamps
 sed \
     -e "s/styles\.css/styles.min.css/g" \
+    -e "s/tailwind-config\.js/tailwind-config.min.js/g" \
     -e "s/?v=[0-9]*/?v=$TIMESTAMP/g" \
     index.html | \
 # Second pass: remove individual JS files from head and replace main.js with bundle at end
