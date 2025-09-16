@@ -117,6 +117,19 @@ sed -i.bak \
 # Remove backup file
 rm -f index.html.bak
 
+# Minify HTML
+echo "📄 Minifying HTML..."
+if command_exists "npx"; then
+    if npx html-minifier --version >/dev/null 2>&1; then
+        npx html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true index.html -o index.html
+    else
+        echo "⚠️  Installing html-minifier for HTML minification..."
+        npx html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true index.html -o index.html
+    fi
+else
+    echo "⚠️  Warning: No HTML minifier found, keeping original file"
+fi
+
 # Add production files to git
 echo "📦 Adding production files to git..."
 git add assets/css/styles.min.css assets/js/main.min.js index.html
@@ -125,7 +138,7 @@ git add assets/css/styles.min.css assets/js/main.min.js index.html
 echo "💾 Committing production-ready code..."
 git commit -m "Production deployment - minified assets with cache busting
 
-- Minified CSS and JavaScript files
+- Minified CSS, JavaScript, and HTML files
 - Updated asset URLs with cache busting timestamp: $TIMESTAMP  
 - Based on master commit: $CURRENT_COMMIT
 
@@ -154,7 +167,7 @@ echo "📋 Summary:"
 echo "   • Master branch: committed current changes"
 echo "   • Live branch: cherry-picked changes and created production-ready code"
 echo "   • Cache busting timestamp: $TIMESTAMP"
-echo "   • Minified files: styles.min.css, main.min.js"
+echo "   • Minified files: styles.min.css, main.min.js, index.html"
 echo ""
 echo "🔧 Next steps:"
 echo "   • Configure GitHub Pages to serve from 'live' branch"
