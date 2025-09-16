@@ -15,157 +15,16 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#F8F6F0',
-                        accent: '#8B9DC3',
-                        surface1: '#E8E5E0',
-                        sage: '#A8B5A3',
-                        warm: '#D4C4B0',
-                        stone: '#9B9B9B',
-                    },
-                    fontFamily: {
-                        'dm-sans': ['DM Sans', 'sans-serif'],
-                        'lora': ['Lora', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="assets/js/tailwind-config.js?v=20250915"></script>
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/styles.css?v=20250915">
     
-    <!-- Analytics and Tracking Setup -->
-    <script>
-        // Event tracking function
-        function trackEvent(eventLabel) {
-            if (window.gtag && typeof window.gtag === 'function') {
-                gtag('event', 'cta_click', {
-                    'event_category': 'engagement',
-                    'event_label': eventLabel,
-                    'value': 1
-                });
-            }
-        }
-
-        // Section engagement tracking
-        function setupSectionTracking() {
-            const sectionTimes = {};
-            
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    const sectionId = entry.target.id;
-                    if (entry.isIntersecting) {
-                        sectionTimes[sectionId] = Date.now();
-                    } else if (sectionTimes[sectionId]) {
-                        const timeSpent = Date.now() - sectionTimes[sectionId];
-                        if (timeSpent > 1000) { // Only track if spent more than 1 second
-                            if (window.gtag && typeof window.gtag === 'function') {
-                                gtag('event', 'section_engagement', {
-                                    'event_category': 'engagement',
-                                    'event_label': sectionId,
-                                    'value': Math.round(timeSpent / 1000)
-                                });
-                            }
-                        }
-                        delete sectionTimes[sectionId];
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            // Observe key sections
-            const sectionsToTrack = ['hero-section', 'how-we-are-different-section', 'how-can-we-help-section', 'cta-section'];
-            sectionsToTrack.forEach(function(sectionId) {
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    observer.observe(section);
-                }
-            });
-        }
-
-        // Load Google Analytics
-        window.loadGoogleAnalytics = function() {
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('js', new Date());
-            gtag('config', 'G-26Q381MZD0');
-            
-            // Load GA script
-            const script = document.createElement('script');
-            script.async = true;
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-26Q381MZD0';
-            document.head.appendChild(script);
-            
-            setupEventTracking();
-            setupScrollTracking();
-        };
-
-        // Event tracking setup
-        window.setupEventTracking = function() {
-            // Track CTA clicks
-            const ctaSelectors = [
-                { selector: 'a[href*="wa.me"]', label: 'whatsapp' },
-                { selector: 'a[href*="calendly"]', label: 'calendly' },
-                { selector: 'a[href*="mailto:"]', label: 'email' }
-            ];
-
-            ctaSelectors.forEach(function(cta) {
-                document.querySelectorAll(cta.selector).forEach(function(element) {
-                    element.addEventListener('click', function() {
-                        trackEvent(cta.label);
-                    });
-                });
-            });
-
-            // Track modal opens
-            const modalTrigger = document.getElementById('open-modal');
-            if (modalTrigger) {
-                modalTrigger.addEventListener('click', function() {
-                    trackEvent('modal_open');
-                });
-            }
-
-            setupSectionTracking();
-        };
-
-        // Scroll depth tracking
-        window.setupScrollTracking = function() {
-            const scrollThresholds = [25, 50, 75, 90];
-            const scrolledThresholds = [];
-            let scrollTimeout;
-
-            window.addEventListener('scroll', function() {
-                if (!scrollTimeout) {
-                    scrollTimeout = setTimeout(function() {
-                        trackScrollDepth();
-                        scrollTimeout = null;
-                    }, 250);
-                }
-            });
-
-            function trackScrollDepth() {
-                const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
-                
-                scrollThresholds.forEach(function(threshold) {
-                    if (scrollPercent >= threshold && !scrolledThresholds.includes(threshold)) {
-                        scrolledThresholds.push(threshold);
-                        if (window.gtag && typeof window.gtag === 'function') {
-                            gtag('event', 'scroll_depth', {
-                                'event_category': 'engagement',
-                                'event_label': threshold + '_percent',
-                                'value': threshold
-                            });
-                        }
-                    }
-                });
-            }
-        };
-    </script>
+    <!-- JavaScript Modules -->
+    <script src="assets/js/user-detection.js?v=20250915"></script>
+    <script src="assets/js/analytics.js?v=20250915"></script>
+    <script src="assets/js/hero-animation.js?v=20250915"></script>
+    <script src="assets/js/stage-selector.js?v=20250915"></script>
 </head>
 
 <body class="font-lora text-black bg-warm">
