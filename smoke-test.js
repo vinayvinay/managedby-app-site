@@ -74,7 +74,7 @@ async function smokeTest() {
     });
     
     // Wait a bit for any JS to run
-    await page.waitForTimeout(1000);
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     if (errors.length > 0) {
       throw new Error(`Console errors: ${errors.join(', ')}`);
