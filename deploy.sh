@@ -20,7 +20,8 @@ cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js |
 npx terser assets/js/tailwind-config.js -o docs/assets/js/tailwind-config.min.js
 
 # Copy GitHub Pages specific files
-[ -f CNAME ] && cp CNAME docs/
+# Ensure CNAME file always exists with correct domain
+echo "managedby.app" > docs/CNAME
 [ -f 404.html ] && cp 404.html docs/
 [ -f robots.txt ] && cp robots.txt docs/
 [ -f sitemap.xml ] && cp sitemap.xml docs/
