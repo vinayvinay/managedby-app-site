@@ -7,9 +7,6 @@ const PrivacyManager = {
     }
 };
 
-function showPrivacyPolicy() {
-    alert('Privacy Policy:\n\nWe use Google Analytics to:\n• Understand which sections users visit\n• Track button clicks on our CTAs\n• Improve our website experience\n\nWe do not:\n• Sell your data\n• Track you across other websites\n• Store personal information\n\nYou can decline cookies and still use our site normally.');
-}
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -149,28 +146,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Modal functionality
     const ModalManager = {
-        modal: document.getElementById('contact-modal'),
+        contactModal: document.getElementById('contact-modal'),
+        privacyModal: document.getElementById('privacy-modal'),
         
         init() {
-            document.getElementById('open-modal').addEventListener('click', () => this.open());
-            document.getElementById('close-modal').addEventListener('click', () => this.close());
-            this.modal.addEventListener('click', (e) => {
-                if (e.target === this.modal) this.close();
+            // Contact modal
+            document.getElementById('open-modal').addEventListener('click', () => this.openContact());
+            document.getElementById('close-modal').addEventListener('click', () => this.closeContact());
+            this.contactModal.addEventListener('click', (e) => {
+                if (e.target === this.contactModal) this.closeContact();
             });
+            
+            // Privacy modal
+            document.getElementById('open-privacy-modal').addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openPrivacy();
+            });
+            document.getElementById('close-privacy-modal').addEventListener('click', () => this.closePrivacy());
+            this.privacyModal.addEventListener('click', (e) => {
+                if (e.target === this.privacyModal) this.closePrivacy();
+            });
+            
+            // Escape key handling for both modals
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
-                    this.close();
+                if (e.key === 'Escape') {
+                    if (!this.contactModal.classList.contains('hidden')) {
+                        this.closeContact();
+                    }
+                    if (!this.privacyModal.classList.contains('hidden')) {
+                        this.closePrivacy();
+                    }
                 }
             });
         },
         
-        open() {
-            this.modal.classList.remove('hidden');
+        openContact() {
+            this.contactModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         },
         
-        close() {
-            this.modal.classList.add('hidden');
+        closeContact() {
+            this.contactModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        },
+        
+        openPrivacy() {
+            this.privacyModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        },
+        
+        closePrivacy() {
+            this.privacyModal.classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
     };
