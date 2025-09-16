@@ -28,9 +28,22 @@ npx terser assets/js/tailwind-config.js -o docs/assets/js/tailwind-config.min.js
 # Add .nojekyll to disable Jekyll processing
 touch docs/.nojekyll
 
-# Generate HTML
+# Generate HTML with proper script order
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
-sed "s/styles\.css/styles.min.css/g; s/main\.js/bundle.min.js/g; /user-detection\|analytics\|hero-animation\|stage-selector/d; s/?v=[0-9]*/?v=$TIMESTAMP/g" index.html > docs/index.html
+# First pass: update asset references and timestamps
+sed \
+    -e "s/styles\.css/styles.min.css/g" \
+    -e "s/?v=[0-9]*/?v=$TIMESTAMP/g" \
+    index.html | \
+# Second pass: remove individual JS files from head and replace main.js with bundle at end
+sed \
+    -e "/user-detection\.js/d" \
+    -e "/analytics\.js/d" \
+    -e "/hero-animation\.js/d" \
+    -e "/stage-selector\.js/d" \
+    -e "s/main\.js/bundle.min.js/g" > docs/index.html
+
+# Minify the HTML
 npx html-minifier docs/index.html -o docs/index.html --collapse-whitespace --remove-comments
 
 # Smoke test
