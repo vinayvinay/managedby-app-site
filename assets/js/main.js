@@ -1,8 +1,28 @@
 // Privacy & Analytics Management
 const PrivacyManager = {
+    // Check if analytics consent was given
+    hasAnalyticsConsent() {
+        const consent = localStorage.getItem('cookieConsent');
+        return consent === 'accepted';
+    },
+    
+    // Save user's consent choice
+    saveConsent(choice) {
+        localStorage.setItem('cookieConsent', choice);
+        localStorage.setItem('consentTimestamp', Date.now().toString());
+    },
+    
+    // Load analytics only if consent given
     loadAnalytics() {
-        if (window.AnalyticsManager) {
+        if (this.hasAnalyticsConsent() && window.AnalyticsManager) {
             window.AnalyticsManager.init();
+        }
+    },
+    
+    // Initialize - load analytics if previously consented
+    init() {
+        if (this.hasAnalyticsConsent()) {
+            this.loadAnalytics();
         }
     }
 };
@@ -14,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const privacyBanner = document.getElementById('privacy-banner');
     
     function showPrivacyBanner() {
-        if (privacyBanner && !localStorage.getItem('privacyBannerDismissed')) {
+        // Show banner if no consent choice has been made
+        if (privacyBanner && !localStorage.getItem('cookieConsent')) {
             privacyBanner.classList.add('show');
         }
     }
@@ -23,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (privacyBanner) {
             privacyBanner.classList.remove('show');
             privacyBanner.classList.add('hide');
-            localStorage.setItem('privacyBannerDismissed', 'true');
         }
     }
     
@@ -33,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (acceptBtn) {
         acceptBtn.addEventListener('click', function() {
+            PrivacyManager.saveConsent('accepted');
             PrivacyManager.loadAnalytics();
             hidePrivacyBanner();
         });
@@ -40,9 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (declineBtn) {
         declineBtn.addEventListener('click', function() {
+            PrivacyManager.saveConsent('declined');
             hidePrivacyBanner();
         });
     }
+    
+    // Initialize privacy manager first
+    PrivacyManager.init();
     
     // Initialize hero text animation
     HeroAnimationManager.init(showPrivacyBanner);
