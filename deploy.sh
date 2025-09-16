@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Deploy script for GitHub Pages production deployment
-# This script prepares production-ready code on the 'live' branch
+# Creates production-ready code in the build/ directory
 
 set -e  # Exit on any error
 
-echo "🚀 Starting deployment to live branch..."
+echo "🚀 Starting build process..."
 
 # Function to check if command exists
 command_exists() {
@@ -24,12 +24,12 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
-# Commit current changes on master if there are any
-echo "📝 Checking for uncommitted changes on master..."
+# Commit current changes if there are any
+echo "📝 Checking for uncommitted changes..."
 if ! git diff-index --quiet HEAD --; then
-    echo "💾 Committing current changes on master..."
+    echo "💾 Committing current changes..."
     git add .
-    git commit -m "Development changes before deployment
+    git commit -m "Development changes before build
 
 🤖 Generated with [Claude Code](https://claude.ai/code)
 
@@ -40,136 +40,118 @@ fi
 
 # Get current commit hash for reference
 CURRENT_COMMIT=$(git rev-parse HEAD)
-echo "📍 Current master commit: $CURRENT_COMMIT"
+echo "📍 Current commit: $CURRENT_COMMIT"
 
-# Create or switch to live branch
-echo "🌿 Switching to live branch..."
-if git show-ref --verify --quiet refs/heads/live; then
-    git checkout live
-    echo "✅ Switched to existing live branch"
-    
-    # Get list of commits to cherry-pick (everything since live branch diverged from master)
-    echo "🍒 Finding commits to cherry-pick from master..."
-    LAST_LIVE_COMMIT=$(git merge-base live master)
-    COMMITS_TO_PICK=$(git rev-list --reverse $LAST_LIVE_COMMIT..master)
-    
-    if [ -n "$COMMITS_TO_PICK" ]; then
-        echo "📝 Cherry-picking commits from master..."
-        for commit in $COMMITS_TO_PICK; do
-            echo "   🍒 Cherry-picking: $(git log --oneline -1 $commit)"
-            git cherry-pick $commit
-        done
-    else
-        echo "✅ Live branch is already up to date with master"
-    fi
-else
-    # Create new live branch from master
-    git checkout -b live master
-    echo "✅ Created new live branch from master"
-fi
-
-# Create production-ready files with cache busting
-echo "⚡ Creating production-ready files..."
+# Create/clean build directory
+echo "📁 Setting up build directory..."
+rm -rf build/
+mkdir -p build/assets/css build/assets/js build/assets/images
 
 # Generate timestamp for cache busting
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
+echo "⏰ Cache busting timestamp: $TIMESTAMP"
 
-# Minify CSS using clean-css
+# Copy assets to build directory
+echo "📋 Copying assets..."
+cp -r assets/images/* build/assets/images/
+cp -r assets/js/* build/assets/js/
+
+# Minify CSS
 echo "🎨 Minifying CSS..."
 if command_exists "cleancss"; then
-    cleancss -o assets/css/styles.min.css assets/css/styles.css
+    cleancss -o build/assets/css/styles.min.css assets/css/styles.css
 elif command_exists "npx"; then
     if npx cleancss --version >/dev/null 2>&1; then
-        npx cleancss -o assets/css/styles.min.css assets/css/styles.css
+        npx cleancss -o build/assets/css/styles.min.css assets/css/styles.css
     else
         echo "⚠️  Warning: No CSS minifier found, copying original file"
-        cp assets/css/styles.css assets/css/styles.min.css
+        cp assets/css/styles.css build/assets/css/styles.min.css
     fi
 else
     echo "⚠️  Warning: No CSS minifier found, copying original file"
-    cp assets/css/styles.css assets/css/styles.min.css
+    cp assets/css/styles.css build/assets/css/styles.min.css
 fi
 
-# Minify JavaScript using terser
+# Minify JavaScript
 echo "📜 Minifying JavaScript..."
 if command_exists "terser"; then
-    terser assets/js/main.js -o assets/js/main.min.js -c -m
+    terser assets/js/main.js -o build/assets/js/main.min.js -c -m
 elif command_exists "npx"; then
     if npx terser --version >/dev/null 2>&1; then
-        npx terser assets/js/main.js -o assets/js/main.min.js -c -m
+        npx terser assets/js/main.js -o build/assets/js/main.min.js -c -m
     else
         echo "⚠️  Warning: No JS minifier found, copying original file"
-        cp assets/js/main.js assets/js/main.min.js
+        cp assets/js/main.js build/assets/js/main.min.js
     fi
 else
     echo "⚠️  Warning: No JS minifier found, copying original file"
-    cp assets/js/main.js assets/js/main.min.js
+    cp assets/js/main.js build/assets/js/main.min.js
 fi
 
-# Update index.html with cache-busted URLs and minified files
-echo "🔄 Updating index.html with production settings..."
-sed -i.bak \
+# Create production index.html with updated asset references
+echo "🔄 Creating production index.html..."
+sed \
     -e "s/styles\.css?v=[^\"']*/styles.min.css?v=$TIMESTAMP/g" \
     -e "s/main\.js?v=[^\"']*/main.min.js?v=$TIMESTAMP/g" \
-    -e "s/favicon\.png?v=[^\"']*/favicon.png?v=$TIMESTAMP/g" \
-    index.html
-
-# Remove backup file
-rm -f index.html.bak
+    -e "s/?v=[0-9]\{8,\}/?v=$TIMESTAMP/g" \
+    index.html > build/index.html
 
 # Minify HTML
 echo "📄 Minifying HTML..."
 if command_exists "npx"; then
     if npx html-minifier --version >/dev/null 2>&1; then
-        npx html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true index.html -o index.html
+        npx html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true build/index.html -o build/index.html
     else
-        echo "⚠️  Installing html-minifier for HTML minification..."
-        npx html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true index.html -o index.html
+        echo "⚠️  Warning: No HTML minifier found, keeping original file"
     fi
 else
     echo "⚠️  Warning: No HTML minifier found, keeping original file"
 fi
 
-# Add production files to git
-echo "📦 Adding production files to git..."
-git add assets/css/styles.min.css assets/js/main.min.js index.html
+# Add build directory to git (if not already ignored)
+echo "📦 Adding build directory to git..."
+if [ ! -f .gitignore ] || ! grep -q "^build/$" .gitignore; then
+    echo "build/" >> .gitignore
+    echo "✅ Added build/ to .gitignore"
+else
+    echo "✅ build/ already in .gitignore"
+fi
 
-# Commit production changes
-echo "💾 Committing production-ready code..."
-git commit -m "Production deployment - minified assets with cache busting
+# Force add build directory (override .gitignore for deployment)
+git add -f build/
 
-- Minified CSS, JavaScript, and HTML files
+# Commit build
+echo "💾 Committing production build..."
+git commit -m "Production build - minified assets with cache busting
+
+- Minified CSS, JavaScript, and HTML files in build/ directory
 - Updated asset URLs with cache busting timestamp: $TIMESTAMP  
-- Based on master commit: $CURRENT_COMMIT
+- Based on commit: $CURRENT_COMMIT
 
 🤖 Generated with [Claude Code](https://claude.ai/code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
 # Push to remote
-echo "🚀 Pushing live branch to remote..."
+echo "🚀 Pushing to remote..."
 if git remote | grep -q origin; then
-    git push -u origin live
-    echo "✅ Successfully pushed to origin/live"
+    git push origin master
+    echo "✅ Successfully pushed to origin/master"
 else
     echo "⚠️  No remote 'origin' found. Please add a remote and push manually:"
     echo "   git remote add origin <your-repo-url>"
-    echo "   git push -u origin live"
+    echo "   git push origin master"
 fi
 
-# Switch back to master
-echo "🔄 Switching back to master..."
-git checkout master
-
 echo ""
-echo "🎉 Deployment complete!"
+echo "🎉 Build complete!"
 echo "📋 Summary:"
-echo "   • Master branch: committed current changes"
-echo "   • Live branch: cherry-picked changes and created production-ready code"
+echo "   • Production files created in build/ directory"
 echo "   • Cache busting timestamp: $TIMESTAMP"
-echo "   • Minified files: styles.min.css, main.min.js, index.html"
+echo "   • Minified files: build/assets/css/styles.min.css, build/assets/js/main.min.js"
+echo "   • Production HTML: build/index.html"
 echo ""
 echo "🔧 Next steps:"
-echo "   • Configure GitHub Pages to serve from 'live' branch"
+echo "   • Configure GitHub Pages to serve from /build directory"
 echo "   • Your production site will be available at your GitHub Pages URL"
 echo ""
