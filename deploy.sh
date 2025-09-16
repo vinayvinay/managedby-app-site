@@ -71,55 +71,67 @@ else
     cp assets/css/styles.css build/assets/css/styles.min.css
 fi
 
-# Minify individual JavaScript files
-echo "📜 Minifying JavaScript files..."
+# Create JavaScript bundle
+echo "📜 Creating JavaScript bundle..."
 
-# Minify main.js
-echo "  → Minifying main.js..."
+# Combine JS files into a single bundle (in order)
+echo "  → Combining JS files..."
+cat assets/js/user-detection.js \
+    assets/js/analytics.js \
+    assets/js/hero-animation.js \
+    assets/js/stage-selector.js \
+    assets/js/main.js > /tmp/bundle.js
+
+# Minify the combined bundle
+echo "  → Minifying bundle..."
 if command_exists "terser"; then
-    terser assets/js/main.js -o build/assets/js/main.min.js -c -m
+    terser /tmp/bundle.js -o build/assets/js/bundle.min.js -c -m
 elif command_exists "npx"; then
     if npx terser --version >/dev/null 2>&1; then
-        npx terser assets/js/main.js -o build/assets/js/main.min.js -c -m
+        npx terser /tmp/bundle.js -o build/assets/js/bundle.min.js -c -m
+    else
+        echo "⚠️  Warning: No JS minifier found, copying combined file"
+        cp /tmp/bundle.js build/assets/js/bundle.min.js
+    fi
+else
+    echo "⚠️  Warning: No JS minifier found, copying combined file"
+    cp /tmp/bundle.js build/assets/js/bundle.min.js
+fi
+
+# Clean up temporary file
+rm -f /tmp/bundle.js
+
+# Handle Tailwind config separately (needs to stay separate)
+echo "  → Minifying tailwind-config.js..."
+if command_exists "terser"; then
+    terser assets/js/tailwind-config.js -o build/assets/js/tailwind-config.min.js -c -m
+elif command_exists "npx"; then
+    if npx terser --version >/dev/null 2>&1; then
+        npx terser assets/js/tailwind-config.js -o build/assets/js/tailwind-config.min.js -c -m
     else
         echo "⚠️  Warning: No JS minifier found, copying original file"
-        cp assets/js/main.js build/assets/js/main.min.js
+        cp assets/js/tailwind-config.js build/assets/js/tailwind-config.min.js
     fi
 else
     echo "⚠️  Warning: No JS minifier found, copying original file"
-    cp assets/js/main.js build/assets/js/main.min.js
+    cp assets/js/tailwind-config.js build/assets/js/tailwind-config.min.js
 fi
-
-# Minify other JS files that are referenced in HTML
-for jsfile in tailwind-config user-detection analytics hero-animation stage-selector; do
-    echo "  → Minifying ${jsfile}.js..."
-    if command_exists "terser"; then
-        terser assets/js/${jsfile}.js -o build/assets/js/${jsfile}.min.js -c -m
-    elif command_exists "npx"; then
-        if npx terser --version >/dev/null 2>&1; then
-            npx terser assets/js/${jsfile}.js -o build/assets/js/${jsfile}.min.js -c -m
-        else
-            echo "⚠️  Warning: No JS minifier found, copying original file"
-            cp assets/js/${jsfile}.js build/assets/js/${jsfile}.min.js
-        fi
-    else
-        echo "⚠️  Warning: No JS minifier found, copying original file"
-        cp assets/js/${jsfile}.js build/assets/js/${jsfile}.min.js
-    fi
-done
 
 # Create production index.html with updated asset references
 echo "🔄 Creating production index.html..."
+
+# First replace individual JS files with bundle, then update remaining assets
 sed \
     -e "s/styles\.css?v=[^\"']*/styles.min.css?v=$TIMESTAMP/g" \
-    -e "s/main\.js?v=[^\"']*/main.min.js?v=$TIMESTAMP/g" \
     -e "s/tailwind-config\.js?v=[^\"']*/tailwind-config.min.js?v=$TIMESTAMP/g" \
-    -e "s/user-detection\.js?v=[^\"']*/user-detection.min.js?v=$TIMESTAMP/g" \
-    -e "s/analytics\.js?v=[^\"']*/analytics.min.js?v=$TIMESTAMP/g" \
-    -e "s/hero-animation\.js?v=[^\"']*/hero-animation.min.js?v=$TIMESTAMP/g" \
-    -e "s/stage-selector\.js?v=[^\"']*/stage-selector.min.js?v=$TIMESTAMP/g" \
     -e "s/?v=[0-9]\{8,\}/?v=$TIMESTAMP/g" \
-    index.html > build/index.html
+    index.html | \
+sed \
+    -e '/user-detection\.js/d' \
+    -e '/analytics\.js/d' \
+    -e '/hero-animation\.js/d' \
+    -e '/stage-selector\.js/d' \
+    -e "s|main\.js?v=[^\"']*|bundle.min.js?v=$TIMESTAMP|g" > build/index.html
 
 # Minify HTML
 echo "📄 Minifying HTML..."
@@ -174,7 +186,8 @@ echo "📋 Summary:"
 echo "   • Production files created in build/ directory"
 echo "   • Cache busting timestamp: $TIMESTAMP"
 echo "   • Minified CSS: styles.min.css"
-echo "   • Minified JS: main.min.js, tailwind-config.min.js, user-detection.min.js, analytics.min.js, hero-animation.min.js, stage-selector.min.js"
+echo "   • JavaScript bundle: bundle.min.js (combined main, user-detection, analytics, hero-animation, stage-selector)"
+echo "   • Separate JS: tailwind-config.min.js"
 echo "   • Production HTML: build/index.html"
 echo ""
 echo "🔧 Next steps:"
