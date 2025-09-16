@@ -10,10 +10,10 @@ async function smokeTest() {
   
   try {
     // Load the built HTML file
-    const htmlPath = path.join(__dirname, 'build', 'index.html');
+    const htmlPath = path.join(__dirname, 'docs', 'index.html');
     
     if (!fs.existsSync(htmlPath)) {
-      throw new Error('Build file not found: build/index.html');
+      throw new Error('Build file not found: docs/index.html');
     }
     
     await page.goto(`file://${htmlPath}`);
@@ -64,17 +64,26 @@ async function smokeTest() {
     // Test 6: Check no console errors or warnings
     const errors = [];
     const warnings = [];
+    const allMessages = [];
     
     page.on('console', msg => {
+      const message = msg.text();
+      allMessages.push(`[${msg.type()}] ${message}`);
+      
       if (msg.type() === 'error') {
-        errors.push(msg.text());
-      } else if (msg.type() === 'warning') {
-        warnings.push(msg.text());
+        errors.push(message);
+      } else if (msg.type() === 'warning' || msg.type() === 'warn') {
+        warnings.push(message);
       }
     });
     
-    // Wait a bit for any JS to run
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Wait longer for all external scripts (like Tailwind CDN) to load
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // Log all messages for debugging
+    if (allMessages.length > 0) {
+      console.log('📋 Console messages:', allMessages);
+    }
     
     if (errors.length > 0) {
       throw new Error(`Console errors: ${errors.join(', ')}`);

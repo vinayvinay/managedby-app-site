@@ -10,19 +10,19 @@ git add . && git commit -m "Pre-build commit
 
 Co-Authored-By: Claude <noreply@anthropic.com>" || true
 
-# Clean build
-rm -rf build && mkdir -p build/assets/{css,js,images}
+# Clean docs directory
+rm -rf docs && mkdir -p docs/assets/{css,js,images}
 
 # Copy & process assets
-cp -r assets/images/* build/assets/images/
-npx cleancss assets/css/styles.css -o build/assets/css/styles.min.css
-cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o build/assets/js/bundle.min.js
-npx terser assets/js/tailwind-config.js -o build/assets/js/tailwind-config.min.js
+cp -r assets/images/* docs/assets/images/
+npx cleancss assets/css/styles.css -o docs/assets/css/styles.min.css
+cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o docs/assets/js/bundle.min.js
+npx terser assets/js/tailwind-config.js -o docs/assets/js/tailwind-config.min.js
 
 # Generate HTML
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
-sed "s/styles\.css/styles.min.css/g; s/main\.js/bundle.min.js/g; /user-detection\|analytics\|hero-animation\|stage-selector/d; s/?v=[0-9]*/?v=$TIMESTAMP/g" index.html > build/index.html
-npx html-minifier build/index.html -o build/index.html --collapse-whitespace --remove-comments
+sed "s/styles\.css/styles.min.css/g; s/main\.js/bundle.min.js/g; /user-detection\|analytics\|hero-animation\|stage-selector/d; s/?v=[0-9]*/?v=$TIMESTAMP/g" index.html > docs/index.html
+npx html-minifier docs/index.html -o docs/index.html --collapse-whitespace --remove-comments
 
 # Smoke test
 echo "🧪 Running smoke test..."
@@ -38,7 +38,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Deploy
-git add -f build/ && git commit -m "Build: $TIMESTAMP
+git add -f docs/ && git commit -m "Build: $TIMESTAMP
 
 🤖 Generated with [Claude Code](https://claude.ai/code)
 

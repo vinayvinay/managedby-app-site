@@ -24,5 +24,5 @@ test-changes.js
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.dbbuild/
-build/
+Thumbs.db
+docs/
