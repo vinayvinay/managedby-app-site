@@ -19,6 +19,12 @@ npx cleancss assets/css/styles.css -o docs/assets/css/styles.min.css
 cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o docs/assets/js/bundle.min.js
 npx terser assets/js/tailwind-config.js -o docs/assets/js/tailwind-config.min.js
 
+# Copy GitHub Pages specific files
+[ -f CNAME ] && cp CNAME docs/
+[ -f 404.html ] && cp 404.html docs/
+[ -f robots.txt ] && cp robots.txt docs/
+[ -f sitemap.xml ] && cp sitemap.xml docs/
+
 # Add .nojekyll to disable Jekyll processing
 touch docs/.nojekyll
 
