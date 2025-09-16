@@ -10,24 +10,19 @@ git add . && git commit -m "Pre-build commit
 
 Co-Authored-By: Claude <noreply@anthropic.com>" || true
 
-# Clean docs directory
-rm -rf docs && mkdir -p docs/assets/{css,js,images}
+# Clean dist directory
+rm -rf dist && mkdir -p dist/assets/{css,js,images}
 
 # Copy & process assets
-cp -r assets/images/* docs/assets/images/
-npx cleancss assets/css/styles.css -o docs/assets/css/styles.min.css
-cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o docs/assets/js/bundle.min.js
-npx terser assets/js/tailwind-config.js -o docs/assets/js/tailwind-config.min.js
+cp -r assets/images/* dist/assets/images/
+npx cleancss assets/css/styles.css -o dist/assets/css/styles.min.css
+cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o dist/assets/js/bundle.min.js
+npx terser assets/js/tailwind-config.js -o dist/assets/js/tailwind-config.min.js
 
-# Copy GitHub Pages specific files
-# Ensure CNAME file always exists with correct domain
-echo "managedby.app" > docs/CNAME
-[ -f 404.html ] && cp 404.html docs/
-[ -f robots.txt ] && cp robots.txt docs/
-[ -f sitemap.xml ] && cp sitemap.xml docs/
-
-# Add .nojekyll to disable Jekyll processing
-touch docs/.nojekyll
+# Copy static files
+[ -f 404.html ] && cp 404.html dist/
+[ -f robots.txt ] && cp robots.txt dist/
+[ -f sitemap.xml ] && cp sitemap.xml dist/
 
 # Generate HTML with proper script order
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
@@ -43,10 +38,10 @@ sed \
     -e "/analytics\.js/d" \
     -e "/hero-animation\.js/d" \
     -e "/stage-selector\.js/d" \
-    -e "s/main\.js/bundle.min.js/g" > docs/index.html
+    -e "s/main\.js/bundle.min.js/g" > dist/index.html
 
 # Minify the HTML
-npx html-minifier docs/index.html -o docs/index.html --collapse-whitespace --remove-comments
+npx html-minifier dist/index.html -o dist/index.html --collapse-whitespace --remove-comments
 
 # Smoke test
 echo "🧪 Running smoke test..."
@@ -62,10 +57,6 @@ if [ $? -ne 0 ]; then
 fi
 
 # Deploy
-git add -f docs/ && git commit -m "Build: $TIMESTAMP
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>" && git push
+git add -f dist/ && git commit -m "Build: $TIMESTAMP" && git push
 
 echo "✅ Done! Timestamp: $TIMESTAMP"
