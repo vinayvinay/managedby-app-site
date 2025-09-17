@@ -100,6 +100,7 @@ const AnalyticsManager = {
     // Track section engagement using Intersection Observer
     setupSectionTracking() {
         const sectionTimes = {};
+        const self = this;
         
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -109,7 +110,7 @@ const AnalyticsManager = {
                 } else if (sectionTimes[sectionId]) {
                     const timeSpent = Date.now() - sectionTimes[sectionId];
                     if (timeSpent > 1000) { // Only track if spent more than 1 second
-                        this.trackEvent('section_engagement', 'engagement', {
+                        self.trackEvent('section_engagement', 'engagement', {
                             section_name: sectionId,
                             time_spent_seconds: Math.round(timeSpent / 1000)
                         });
@@ -117,7 +118,7 @@ const AnalyticsManager = {
                     delete sectionTimes[sectionId];
                 }
             });
-        }.bind(this), { threshold: 0.5 });
+        }, { threshold: 0.5 });
 
         // Observe key sections
         const sectionsToTrack = [
