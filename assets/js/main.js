@@ -98,7 +98,28 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Handle all CTA buttons with class 'open-modal-btn'
             document.querySelectorAll('.open-modal-btn').forEach(btn => {
-                btn.addEventListener('click', () => this.openContact());
+                btn.addEventListener('click', () => {
+                    // Track which CTA was clicked based on its location
+                    let ctaLocation = 'unknown';
+                    const heroSection = document.getElementById('hero-section');
+                    const differentSection = document.getElementById('how-we-are-different-section');
+                    const helpSection = document.getElementById('how-can-we-help-section');
+                    
+                    if (heroSection && heroSection.contains(btn)) {
+                        ctaLocation = 'hero_cta';
+                    } else if (differentSection && differentSection.contains(btn)) {
+                        ctaLocation = 'principles_cta';
+                    } else if (helpSection && helpSection.contains(btn)) {
+                        ctaLocation = 'pricing_cta';
+                    }
+                    
+                    // Track the specific CTA click
+                    if (window.AnalyticsManager) {
+                        window.AnalyticsManager.trackEvent(ctaLocation, 'cta_click');
+                    }
+                    
+                    this.openContact();
+                });
             });
             
             document.getElementById('close-modal').addEventListener('click', () => this.closeContact());

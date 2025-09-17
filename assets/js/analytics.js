@@ -29,7 +29,6 @@ const AnalyticsManager = {
         
         this.isLoaded = true;
         this.setupEventTracking();
-        this.setupScrollTracking();
     },
 
     // Track custom events
@@ -126,41 +125,6 @@ const AnalyticsManager = {
             const section = document.getElementById(sectionId);
             if (section) {
                 observer.observe(section);
-            }
-        });
-    },
-
-    // Track scroll depth
-    setupScrollTracking() {
-        const scrollThresholds = [25, 50, 75, 90];
-        const scrolledThresholds = [];
-        let scrollTimeout;
-
-        const trackScrollDepth = () => {
-            const scrollPercent = Math.round(
-                (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
-            );
-            
-            scrollThresholds.forEach(threshold => {
-                if (scrollPercent >= threshold && !scrolledThresholds.includes(threshold)) {
-                    scrolledThresholds.push(threshold);
-                    if (window.gtag && typeof window.gtag === 'function') {
-                        gtag('event', 'scroll_depth', {
-                            'event_category': 'engagement',
-                            'event_label': `${threshold}_percent`,
-                            'value': threshold
-                        });
-                    }
-                }
-            });
-        };
-
-        window.addEventListener('scroll', () => {
-            if (!scrollTimeout) {
-                scrollTimeout = setTimeout(() => {
-                    trackScrollDepth();
-                    scrollTimeout = null;
-                }, 250);
             }
         });
     }
