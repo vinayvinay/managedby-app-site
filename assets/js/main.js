@@ -74,6 +74,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize stage selector
     StageSelector.init();
+    
+    // Hide scroll indicator after 10 seconds
+    setTimeout(() => {
+        const scrollIndicator = document.getElementById('scroll-indicator');
+        if (scrollIndicator) {
+            scrollIndicator.style.opacity = '0';
+            scrollIndicator.style.transition = 'opacity 1s ease-out';
+            setTimeout(() => {
+                scrollIndicator.style.display = 'none';
+            }, 1000);
+        }
+    }, 15000);
 
     // Modal functionality
     const ModalManager = {
@@ -81,8 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
         privacyModal: document.getElementById('privacy-modal'),
         
         init() {
-            // Contact modal
+            // Contact modal - handle both the original button and new CTA buttons
             document.getElementById('open-modal').addEventListener('click', () => this.openContact());
+            
+            // Handle all CTA buttons with class 'open-modal-btn'
+            document.querySelectorAll('.open-modal-btn').forEach(btn => {
+                btn.addEventListener('click', () => this.openContact());
+            });
+            
             document.getElementById('close-modal').addEventListener('click', () => this.closeContact());
             this.contactModal.addEventListener('click', (e) => {
                 if (e.target === this.contactModal) this.closeContact();
