@@ -3,7 +3,7 @@
 
 const AnalyticsManager = {
     config: {
-        trackingId: 'G-26Q381MZD0',
+        trackingId: 'G-XPDJ9JE23Z',
         conversionLabels: {
             lead_generation: 'lead_generation'
         }
