@@ -89,12 +89,6 @@
     border: 1px solid rgba(168, 181, 163, 0.2);
 }
 
-/* Highlight the core management column */
-.service-column.highlight {
-    background: rgba(139, 157, 195, 0.15);
-    color: black;
-    border: 2px solid rgba(139, 157, 195, 0.3);
-}
 
 .service-header {
     text-align: center;
@@ -107,9 +101,6 @@
     justify-content: center;
 }
 
-.service-column.highlight .service-header {
-    border-bottom-color: rgba(0, 0, 0, 0.15);
-}
 
 .service-title {
     font-family: 'DM Sans', sans-serif;
@@ -156,11 +147,6 @@
     justify-content: center;
 }
 
-.service-column.highlight .pricing-bar {
-    background: transparent;
-    color: #000;
-    border-top: 1px solid rgba(0, 0, 0, 0.15);
-}
 
 .pricing-text {
     display: block;
