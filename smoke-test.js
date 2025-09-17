@@ -10,10 +10,10 @@ async function smokeTest() {
   
   try {
     // Load the built HTML file
-    const htmlPath = path.join(__dirname, 'docs', 'index.html');
+    const htmlPath = path.join(__dirname, 'dist', 'index.html');
     
     if (!fs.existsSync(htmlPath)) {
-      throw new Error('Build file not found: docs/index.html');
+      throw new Error('Build file not found: dist/index.html');
     }
     
     await page.goto(`file://${htmlPath}`);
