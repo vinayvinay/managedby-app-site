@@ -74,18 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize stage selector
     StageSelector.init();
-    
-    // Hide scroll indicator after 10 seconds
-    setTimeout(() => {
-        const scrollIndicator = document.getElementById('scroll-indicator');
-        if (scrollIndicator) {
-            scrollIndicator.style.opacity = '0';
-            scrollIndicator.style.transition = 'opacity 1s ease-out';
-            setTimeout(() => {
-                scrollIndicator.style.display = 'none';
-            }, 1000);
-        }
-    }, 15000);
 
     // Modal functionality
     const ModalManager = {
