@@ -32,14 +32,14 @@ const AnalyticsManager = {
     },
 
     // Track custom events
-    trackEvent(eventLabel, eventAction = 'cta_click', eventValue = 1) {
+    trackEvent(eventName, eventAction = 'cta_click', customParams = {}) {
         if (window.gtag && typeof window.gtag === 'function') {
-            gtag('event', eventAction, {
+            gtag('event', eventName, {
                 'event_category': 'engagement',
-                'event_label': eventLabel,
-                'value': eventValue,
+                'action': eventAction,
                 'user_type': UserDetection.getUserType(),
-                'traffic_source': UserDetection.getTrafficSource()
+                'traffic_source': UserDetection.getTrafficSource(),
+                ...customParams
             });
         }
     },
@@ -68,31 +68,40 @@ const AnalyticsManager = {
         ctaSelectors.forEach(cta => {
             document.querySelectorAll(cta.selector).forEach(element => {
                 element.addEventListener('click', () => {
-                    this.trackEvent(cta.label);
+                    // Get location from data attribute or fallback to DOM lookup
+                    const location = element.dataset.location || this.getLocation(element);
+                    
+                    // Track event with location as custom parameter
+                    this.trackEvent(cta.label, 'click', { 
+                        click_location: location 
+                    });
+                    
                     // Track conversion for lead generation
-                    if (['whatsapp', 'calendly', 'email'].includes(cta.label)) {
-                        this.trackConversion(this.config.conversionLabels.lead_generation);
-                    }
+                    this.trackConversion(this.config.conversionLabels.lead_generation);
                 });
             });
         });
 
-        // Track modal opens
-        const modalTrigger = document.getElementById('open-modal');
-        if (modalTrigger) {
-            modalTrigger.addEventListener('click', () => {
-                this.trackEvent('modal_open');
-            });
-        }
+        // Modal opens are tracked by CTA clicks in main.js
 
         this.setupSectionTracking();
+    },
+
+    // Simple location detection
+    getLocation(element) {
+        if (document.getElementById('hero-section')?.contains(element)) return 'hero';
+        if (document.getElementById('how-we-are-different-section')?.contains(element)) return 'principles';
+        if (document.getElementById('how-can-we-help-section')?.contains(element)) return 'pricing';
+        if (document.getElementById('cta-section')?.contains(element)) return 'cta';
+        if (document.querySelector('footer')?.contains(element)) return 'footer';
+        return 'other';
     },
 
     // Track section engagement using Intersection Observer
     setupSectionTracking() {
         const sectionTimes = {};
         
-        const observer = new IntersectionObserver(entries => {
+        const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const sectionId = entry.target.id;
                 if (entry.isIntersecting) {
@@ -100,18 +109,15 @@ const AnalyticsManager = {
                 } else if (sectionTimes[sectionId]) {
                     const timeSpent = Date.now() - sectionTimes[sectionId];
                     if (timeSpent > 1000) { // Only track if spent more than 1 second
-                        if (window.gtag && typeof window.gtag === 'function') {
-                            gtag('event', 'section_engagement', {
-                                'event_category': 'engagement',
-                                'event_label': sectionId,
-                                'value': Math.round(timeSpent / 1000)
-                            });
-                        }
+                        this.trackEvent('section_engagement', 'engagement', {
+                            section_name: sectionId,
+                            time_spent_seconds: Math.round(timeSpent / 1000)
+                        });
                     }
                     delete sectionTimes[sectionId];
                 }
             });
-        }, { threshold: 0.5 });
+        }.bind(this), { threshold: 0.5 });
 
         // Observe key sections
         const sectionsToTrack = [

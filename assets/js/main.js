@@ -82,7 +82,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         init() {
             // Contact modal - handle both the original button and new CTA buttons
-            document.getElementById('open-modal').addEventListener('click', () => this.openContact());
+            document.getElementById('open-modal').addEventListener('click', () => {
+                // Track the main CTA click
+                if (window.AnalyticsManager) {
+                    window.AnalyticsManager.trackEvent('cta_click', 'click', { 
+                        click_location: 'get_started' 
+                    });
+                }
+                this.openContact('get_started');
+            });
             
             // Handle all CTA buttons with class 'open-modal-btn'
             document.querySelectorAll('.open-modal-btn').forEach(btn => {
@@ -94,19 +102,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     const helpSection = document.getElementById('how-can-we-help-section');
                     
                     if (heroSection && heroSection.contains(btn)) {
-                        ctaLocation = 'hero_cta';
+                        ctaLocation = 'hero';
                     } else if (differentSection && differentSection.contains(btn)) {
-                        ctaLocation = 'principles_cta';
+                        ctaLocation = 'principles';
                     } else if (helpSection && helpSection.contains(btn)) {
-                        ctaLocation = 'pricing_cta';
+                        ctaLocation = 'pricing';
                     }
                     
                     // Track the specific CTA click
                     if (window.AnalyticsManager) {
-                        window.AnalyticsManager.trackEvent(ctaLocation, 'cta_click');
+                        window.AnalyticsManager.trackEvent('cta_click', 'click', { 
+                            click_location: ctaLocation 
+                        });
                     }
                     
-                    this.openContact();
+                    this.openContact(ctaLocation);
                 });
             });
             
@@ -138,7 +148,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         },
         
-        openContact() {
+        openContact(location = 'modal') {
+            // Update modal links with the location of the CTA that opened it
+            const modalWhatsApp = this.contactModal.querySelector('a[href*="wa.me"]');
+            const modalEmail = this.contactModal.querySelector('a[href*="mailto:"]');
+            const modalCalendly = this.contactModal.querySelector('a[href*="calendly"]');
+            
+            if (modalWhatsApp) modalWhatsApp.setAttribute('data-location', location);
+            if (modalEmail) modalEmail.setAttribute('data-location', location);
+            if (modalCalendly) modalCalendly.setAttribute('data-location', location);
+            
             this.contactModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         },
