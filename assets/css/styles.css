@@ -138,7 +138,7 @@
     padding: 1rem 0;
     font-family: 'DM Sans', sans-serif;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     width: 100%;
     min-height: 3rem;
@@ -155,7 +155,7 @@
 
 .pricing-text small {
     font-family: 'Lora', serif;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 400;
     font-style: italic;
     color: #000;
@@ -166,7 +166,7 @@
 
 /* Special styling for refund text only */
 .service-column[data-column="1"] .pricing-text small {
-    color: #8AA624; /* Green for refund guarantee text only */
+    color: #4A7C0B; /* Green for refund guarantee text only */
 }
 
 /* Stage Selector Buttons */
@@ -225,7 +225,7 @@
 
 /* Text Color Utilities */
 .text-savings {
-    color: #8AA624;
+    color: #4A7C0B;
     font-weight: 600;
 }
 
