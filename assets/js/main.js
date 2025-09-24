@@ -179,4 +179,48 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     ModalManager.init();
+    
+    // Rent Slider Calculator
+    const rentSlider = document.getElementById('rent-slider');
+    const rentValue = document.getElementById('rent-value');
+    const ourPrice = document.getElementById('our-price');
+    const traditionalPrice = document.getElementById('traditional-price');
+    const monthlySaving = document.getElementById('monthly-saving');
+    
+    function updatePrices(rentAmount) {
+        // Update rent display
+        if (rentValue) {
+            rentValue.textContent = `£${rentAmount.toLocaleString()}`;
+        }
+        
+        // Calculate our price (3.6% including VAT)
+        const ourMonthlyPrice = Math.round(rentAmount * 0.036);
+        if (ourPrice) {
+            ourPrice.textContent = `£${ourMonthlyPrice}`;
+        }
+        
+        // Calculate traditional range (10-15%)
+        const traditionalMin = Math.round(rentAmount * 0.10);
+        const traditionalMax = Math.round(rentAmount * 0.15);
+        if (traditionalPrice) {
+            traditionalPrice.textContent = `£${traditionalMin}-£${traditionalMax}`;
+        }
+        
+        // Calculate savings range
+        const savingsMin = traditionalMin - ourMonthlyPrice;
+        const savingsMax = traditionalMax - ourMonthlyPrice;
+        if (monthlySaving) {
+            monthlySaving.textContent = `£${savingsMin}-£${savingsMax}`;
+        }
+    }
+    
+    if (rentSlider) {
+        // Initialize with default value
+        updatePrices(parseInt(rentSlider.value));
+        
+        // Update on slider change
+        rentSlider.addEventListener('input', function() {
+            updatePrices(parseInt(this.value));
+        });
+    }
 });

@@ -331,12 +331,43 @@
                 </div>
             </div>
 
-            <div class="text-center mt-8 mb-2 max-w-5xl mx-auto">
-                <p class="font-lora text-black-600 italic" style="font-size: 0.9rem;">
-                    A detailed comparison with traditional property management wouldn't be a fair contest. <br class="hidden sm:block">
-                    On fees alone, for £2,250 rent: Traditional agents: 10–15% (£225–£337/month). This service: 3% (£81/month). <br>
-                    <span class="text-savings text-lg font-semibold">Your annual saving: £1,728–£3,072.</span>
-                </p>
+            <div class="text-center mt-8 mb-2 max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg p-8 shadow-lg border border-gray-100">
+                    <h3 class="font-dm-sans text-xl font-bold text-black mb-6">Calculate your monthly savings</h3>
+                    
+                    <!-- Slider -->
+                    <div class="mb-8">
+                        <label class="font-dm-sans text-lg text-black mb-4 block">Monthly rent: <span id="rent-value" class="font-bold">£2,500</span></label>
+                        <div class="relative">
+                            <input type="range" id="rent-slider" min="1800" max="4500" value="2500" 
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                            <div class="flex justify-between text-sm text-gray-500 mt-2">
+                                <span>£1,800</span>
+                                <span>£4,500</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Comparison -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <h4 class="font-dm-sans font-bold text-green-800 mb-2">managedby.app</h4>
+                            <div class="text-2xl font-bold text-green-600" id="our-price">£90</div>
+                            <div class="text-sm text-green-700">3.6% including VAT</div>
+                        </div>
+                        <div class="text-center p-4 bg-red-50 rounded-lg">
+                            <h4 class="font-dm-sans font-bold text-red-800 mb-2">Traditional agents</h4>
+                            <div class="text-2xl font-bold text-red-600" id="traditional-price">£250-£375</div>
+                            <div class="text-sm text-red-700">10-15% typical range</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-accent bg-opacity-20 rounded-lg">
+                        <p class="font-dm-sans text-lg font-semibold text-black">
+                            Your monthly saving: <span id="monthly-saving" class="text-savings">£160-£285</span>
+                        </p>
+                    </div>
+                </div>
             </div>
             
             <div class="text-center mt-12">

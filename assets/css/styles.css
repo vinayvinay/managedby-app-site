@@ -1,5 +1,36 @@
 /* Minimal CSS for managedby.app landing page */
 
+/* Slider Styling */
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(to right, #8B9DC3 0%, #A8B5A3 100%);
+    outline: none;
+    border-radius: 15px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    border: 2px solid #8B9DC3;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    border: 2px solid #8B9DC3;
+}
+
 /* Typography Effects */
 .hero-headline {
     text-shadow: 
