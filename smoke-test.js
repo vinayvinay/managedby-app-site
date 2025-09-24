@@ -32,7 +32,7 @@ async function smokeTest() {
     
     // Test 3: Check main headline
     const headline = await page.$eval('.hero-headline', el => el.textContent);
-    if (!headline.includes('Landlords')) {
+    if (!headline.includes('London\'s only')) {
       throw new Error('Main headline missing or incorrect');
     }
     
