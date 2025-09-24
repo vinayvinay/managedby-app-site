@@ -1,5 +1,39 @@
 /* Minimal CSS for managedby.app landing page */
 
+/* Utility Classes */
+.icon-accent-filter {
+    filter: invert(60%) sepia(20%) saturate(800%) hue-rotate(190deg) brightness(95%) contrast(85%);
+}
+
+.hero-line-height {
+    line-height: 1.3;
+}
+
+.text-small {
+    font-size: 0.9rem;
+}
+
+.hero-bg {
+    background-image: url('assets/images/illustrations-1.png');
+}
+
+/* Component Classes */
+.card-base {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(168, 181, 163, 0.2);
+}
+
+.btn-primary {
+    @apply bg-black text-white px-8 py-4 rounded-lg font-dm-sans font-semibold text-lg transition-colors duration-300 shadow-lg;
+}
+
+.btn-primary:hover {
+    @apply bg-stone;
+}
+
 /* Slider Styling - Clean minimal design */
 .slider {
     -webkit-appearance: none;
@@ -88,15 +122,7 @@
 
 /* Services Section Styles */
 .service-column {
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 20px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
-    position: relative;
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid rgba(168, 181, 163, 0.2);
+    @apply card-base relative min-h-96 flex flex-col;
 }
 
 
@@ -176,7 +202,7 @@
 
 /* Special styling for refund text only */
 .service-column[data-column="1"] .pricing-text small {
-    color: #4A7C0B; /* Green for refund guarantee text only */
+    @apply text-success; /* Green for refund guarantee text only */
 }
 
 /* Stage Selector Buttons */
@@ -235,8 +261,7 @@
 
 /* Text Color Utilities */
 .text-savings {
-    color: #4A7C0B;
-    font-weight: 600;
+    @apply text-success font-semibold;
 }
 
 .text-contract {
@@ -245,12 +270,7 @@
 
 /* Privacy Banner Styles */
 .privacy-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #D4C4B0;
-    border-top: 2px solid #8B9DC3;
+    @apply fixed bottom-0 left-0 right-0 bg-warm border-t-2 border-accent;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
     padding: 1rem 1.5rem;
     z-index: 1000;
@@ -288,9 +308,7 @@
 }
 
 .privacy-banner-text a {
-    color: #BE3D2A;
-    text-decoration: underline;
-    font-weight: 500;
+    @apply text-danger underline font-medium;
 }
 
 .privacy-banner-buttons {
@@ -312,12 +330,11 @@
 }
 
 .privacy-btn-accept {
-    background: #8B9DC3;
-    color: white;
+    @apply bg-accent text-white;
 }
 
 .privacy-btn-accept:hover {
-    background: #7A8BB0;
+    @apply bg-accent-darker;
 }
 
 .privacy-btn-decline {
