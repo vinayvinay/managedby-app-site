@@ -49,23 +49,6 @@ const UserDetection = {
         }
 
         return this._trafficSource;
-    },
-
-    // Reset cache (useful for testing)
-    resetCache() {
-        this._userType = null;
-        this._trafficSource = null;
-    },
-
-    // Get user context for analytics
-    getUserContext() {
-        return {
-            userType: this.getUserType(),
-            trafficSource: this.getTrafficSource(),
-            timestamp: Date.now(),
-            url: window.location.href,
-            referrer: document.referrer
-        };
     }
 };
 

@@ -60,13 +60,6 @@
     text-rendering: optimizeLegibility;
 }
 
-.gradient-underline-text {
-    text-shadow: 
-        0 2px 4px rgba(0, 0, 0, 0.1),
-        0 4px 8px rgba(0, 0, 0, 0.05),
-        0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
 /* Gradient underline effect */
 .gradient-underline {
     position: relative;
@@ -103,19 +96,6 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-}
-
-/* Word reveal animation */
-.word-reveal-js {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s ease-out;
-}
-
-.word-reveal-js.animate {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 /* Services Section Styles */
