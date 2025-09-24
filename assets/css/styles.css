@@ -1,12 +1,14 @@
 /* Minimal CSS for managedby.app landing page */
 
-/* Slider Styling */
+/* Slider Styling - Clean minimal design */
 .slider {
     -webkit-appearance: none;
     appearance: none;
-    background: linear-gradient(to right, #8B9DC3 0%, #A8B5A3 100%);
+    background: #e5e7eb;
     outline: none;
-    border-radius: 15px;
+    border-radius: 8px;
+    height: 8px;
+    border: none;
 }
 
 .slider::-webkit-slider-thumb {
@@ -15,20 +17,35 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background: #8B9DC3;
     cursor: pointer;
-    border: 2px solid #8B9DC3;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-webkit-slider-thumb:hover {
+    background: #7B8DB3;
 }
 
 .slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background: #8B9DC3;
     cursor: pointer;
-    border: 2px solid #8B9DC3;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-moz-range-thumb:hover {
+    background: #7B8DB3;
+}
+
+.slider::-moz-range-track {
+    background: #e5e7eb;
+    border-radius: 8px;
+    height: 8px;
+    border: none;
 }
 
 /* Typography Effects */

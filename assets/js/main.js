@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const rentValue = document.getElementById('rent-value');
     const ourPrice = document.getElementById('our-price');
     const traditionalPrice = document.getElementById('traditional-price');
-    const monthlySaving = document.getElementById('monthly-saving');
+    const annualSaving = document.getElementById('annual-saving');
     
     function updatePrices(rentAmount) {
         // Update rent display
@@ -206,11 +206,11 @@ document.addEventListener('DOMContentLoaded', function() {
             traditionalPrice.textContent = `£${traditionalMin}-£${traditionalMax}`;
         }
         
-        // Calculate savings range
-        const savingsMin = traditionalMin - ourMonthlyPrice;
-        const savingsMax = traditionalMax - ourMonthlyPrice;
-        if (monthlySaving) {
-            monthlySaving.textContent = `£${savingsMin}-£${savingsMax}`;
+        // Calculate annual savings range
+        const annualSavingsMin = (traditionalMin - ourMonthlyPrice) * 12;
+        const annualSavingsMax = (traditionalMax - ourMonthlyPrice) * 12;
+        if (annualSaving) {
+            annualSaving.textContent = `Your annual saving: £${annualSavingsMin.toLocaleString()}-£${annualSavingsMax.toLocaleString()}.`;
         }
     }
     
