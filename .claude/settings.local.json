@@ -16,7 +16,8 @@
       "Bash(git add:*)",
       "Bash(git pull:*)",
       "Bash(rm:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(git revert:*)"
     ],
     "deny": [],
     "ask": []
