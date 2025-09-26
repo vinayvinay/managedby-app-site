@@ -17,7 +17,8 @@
       "Bash(git pull:*)",
       "Bash(rm:*)",
       "WebSearch",
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Bash(sips:*)"
     ],
     "deny": [],
     "ask": []
