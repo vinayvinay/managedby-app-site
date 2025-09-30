@@ -15,49 +15,38 @@ const AnalyticsManager = {
     init() {
         if (this.isLoaded) return;
         
+        // Set up dataLayer first
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         window.gtag = gtag;
+        
+        // Initialize with current timestamp
         gtag('js', new Date());
-        gtag('config', this.config.trackingId);
+        gtag('config', this.config.trackingId, {
+            page_title: document.title,
+            page_location: window.location.href
+        });
         
         // Load GA script
         const script = document.createElement('script');
         script.async = true;
         script.src = `https://www.googletagmanager.com/gtag/js?id=${this.config.trackingId}`;
-        
-        // Wait for script to load before setting up tracking
-        script.onload = () => {
-            console.log('🎯 GA Script loaded, setting up tracking');
-            this.setupEventTracking();
-        };
-        
         document.head.appendChild(script);
+        
         this.isLoaded = true;
+        this.setupEventTracking();
     },
 
     // Track custom events
     trackEvent(eventName, eventAction = 'cta_click', customParams = {}) {
-        console.log('🎯 trackEvent called:', eventName, eventAction, customParams);
-        console.log('🎯 gtag available:', !!(window.gtag && typeof window.gtag === 'function'));
-        console.log('🎯 AnalyticsManager.isLoaded:', this.isLoaded);
-        
         if (window.gtag && typeof window.gtag === 'function') {
-            const eventData = {
+            gtag('event', eventName, {
                 'event_category': 'engagement',
                 'action': eventAction,
                 'user_type': UserDetection.getUserType(),
                 'traffic_source': UserDetection.getTrafficSource(),
                 ...customParams
-            };
-            
-            // Use a small delay to ensure GA is fully ready
-            setTimeout(() => {
-                gtag('event', eventName, eventData);
-                console.log('🎯 GA Event sent (delayed):', eventName, eventData);
-            }, 100);
-        } else {
-            console.log('❌ GA not ready, event not sent');
+            });
         }
     },
 

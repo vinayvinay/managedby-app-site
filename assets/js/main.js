@@ -14,12 +14,7 @@ const PrivacyManager = {
     
     // Load analytics only if consent given
     loadAnalytics() {
-        console.log('🔄 loadAnalytics called');
-        console.log('🔄 hasConsent:', this.hasAnalyticsConsent());
-        console.log('🔄 AnalyticsManager available:', !!window.AnalyticsManager);
-        
         if (this.hasAnalyticsConsent() && window.AnalyticsManager) {
-            console.log('🚀 Initializing AnalyticsManager');
             window.AnalyticsManager.init();
         }
     },
@@ -59,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (acceptBtn) {
         acceptBtn.addEventListener('click', function() {
-            console.log('✅ Accept button clicked');
             PrivacyManager.saveConsent('accepted');
             PrivacyManager.loadAnalytics();
             hidePrivacyConsentModal();
@@ -90,15 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
         init() {
             // Contact modal - handle both the original button and new CTA buttons
             document.getElementById('open-modal').addEventListener('click', () => {
-                console.log('🔵 Main CTA clicked');
                 // Track the main CTA click
                 if (window.AnalyticsManager) {
-                    console.log('🔵 Tracking main CTA click');
                     window.AnalyticsManager.trackEvent('cta_click', 'click', { 
                         click_location: 'get_started' 
                     });
-                } else {
-                    console.log('❌ AnalyticsManager not available');
                 }
                 this.openContact('get_started');
             });
