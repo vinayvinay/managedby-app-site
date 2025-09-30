@@ -43,6 +43,17 @@ const AnalyticsManager = {
         // Wait for script to load before setting up event tracking
         script.onload = () => {
             console.log('🔥 GA script loaded, setting up event tracking');
+            
+            // Test basic event to verify GA4 is working
+            setTimeout(() => {
+                console.log('🔥 Sending test event to verify GA4');
+                gtag('event', 'page_view_test', {
+                    'event_category': 'test',
+                    'test_param': 'test_value'
+                });
+                console.log('🔥 Test event sent');
+            }, 1000);
+            
             this.setupEventTracking();
         };
         
@@ -64,16 +75,23 @@ const AnalyticsManager = {
             const userType = window.UserDetection ? window.UserDetection.getUserType() : 'unknown';
             const trafficSource = window.UserDetection ? window.UserDetection.getTrafficSource() : 'unknown';
             
+            // GA4 uses different parameter names
             const eventData = {
                 'event_category': 'engagement',
-                'action': eventAction,
-                'user_type': userType,
-                'traffic_source': trafficSource,
+                'custom_user_type': userType,
+                'custom_traffic_source': trafficSource,
                 ...customParams
             };
             
             console.log('🔥 Sending GA event:', eventName, eventData);
+            
+            // Also log the raw gtag call for debugging
+            console.log('🔥 Raw gtag call:', 'event', eventName, eventData);
+            
             gtag('event', eventName, eventData);
+            
+            // Log dataLayer to see what's actually being sent
+            console.log('🔥 dataLayer after event:', window.dataLayer.slice(-3));
         } else {
             console.log('🔥 gtag not available, event not sent');
         }
