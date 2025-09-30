@@ -9,6 +9,25 @@ async function smokeTest() {
   const page = await browser.newPage();
   
   try {
+    // Test 6: Set up console error/warning monitoring BEFORE page load
+    const errors = [];
+    const warnings = [];
+    const allMessages = [];
+    
+    page.on('console', msg => {
+      const message = msg.text();
+      allMessages.push(`[${msg.type()}] ${message}`);
+      
+      if (msg.type() === 'error') {
+        errors.push(message);
+      } else if (msg.type() === 'warning' || msg.type() === 'warn') {
+        // Ignore expected Tailwind CDN warning
+        if (!message.includes('cdn.tailwindcss.com should not be used in production')) {
+          warnings.push(message);
+        }
+      }
+    });
+    
     // Load the built HTML file
     const htmlPath = path.join(__dirname, 'dist', 'index.html');
     
@@ -60,22 +79,6 @@ async function smokeTest() {
     if (!jsLoaded) {
       throw new Error('Bundle JS not loaded');
     }
-    
-    // Test 6: Check no console errors or warnings
-    const errors = [];
-    const warnings = [];
-    const allMessages = [];
-    
-    page.on('console', msg => {
-      const message = msg.text();
-      allMessages.push(`[${msg.type()}] ${message}`);
-      
-      if (msg.type() === 'error') {
-        errors.push(message);
-      } else if (msg.type() === 'warning' || msg.type() === 'warn') {
-        warnings.push(message);
-      }
-    });
     
     // Wait longer for all external scripts (like Tailwind CDN) to load
     await new Promise(resolve => setTimeout(resolve, 3000));
