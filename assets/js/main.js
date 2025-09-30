@@ -30,24 +30,25 @@ const PrivacyManager = {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Privacy Banner Management
-    const privacyBanner = document.getElementById('privacy-banner');
+    // Privacy Consent Modal Management
+    const privacyConsentModal = document.getElementById('privacy-consent-modal');
     
-    function showPrivacyBanner() {
-        // Show banner if no consent choice has been made
-        if (privacyBanner && !localStorage.getItem('cookieConsent')) {
-            privacyBanner.classList.add('show');
+    function showPrivacyConsentModal() {
+        // Show modal if no consent choice has been made
+        if (privacyConsentModal && !localStorage.getItem('cookieConsent')) {
+            privacyConsentModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
     }
     
-    function hidePrivacyBanner() {
-        if (privacyBanner) {
-            privacyBanner.classList.remove('show');
-            privacyBanner.classList.add('hide');
+    function hidePrivacyConsentModal() {
+        if (privacyConsentModal) {
+            privacyConsentModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }
     }
     
-    // Privacy banner button handlers
+    // Privacy consent button handlers
     const acceptBtn = document.querySelector('.privacy-btn-accept');
     const declineBtn = document.querySelector('.privacy-btn-decline');
     
@@ -55,14 +56,14 @@ document.addEventListener('DOMContentLoaded', function() {
         acceptBtn.addEventListener('click', function() {
             PrivacyManager.saveConsent('accepted');
             PrivacyManager.loadAnalytics();
-            hidePrivacyBanner();
+            hidePrivacyConsentModal();
         });
     }
     
     if (declineBtn) {
         declineBtn.addEventListener('click', function() {
             PrivacyManager.saveConsent('declined');
-            hidePrivacyBanner();
+            hidePrivacyConsentModal();
         });
     }
     
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     PrivacyManager.init();
     
     // Initialize hero text animation
-    HeroAnimationManager.init(showPrivacyBanner);
+    HeroAnimationManager.init(showPrivacyConsentModal);
 
     // Initialize stage selector
     StageSelector.init();
@@ -130,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 this.openPrivacy();
             });
+            
             document.getElementById('close-privacy-modal').addEventListener('click', () => this.closePrivacy());
             this.privacyModal.addEventListener('click', (e) => {
                 if (e.target === this.privacyModal) this.closePrivacy();

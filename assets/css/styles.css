@@ -243,6 +243,94 @@
     font-weight: 600;
 }
 
+/* Privacy Consent Modal Styles */
+.privacy-consent-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.privacy-consent-content {
+    background: #D4C4B0;
+    border: 3px solid #8B9DC3;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px) scale(0.95); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
+}
+
+.privacy-consent-header {
+    text-align: center;
+    border-bottom: 2px solid rgba(139, 157, 195, 0.3);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.privacy-consent-body p {
+    margin-bottom: 0.75rem;
+}
+
+.privacy-consent-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.privacy-consent-footer {
+    text-align: center;
+}
+
+/* Privacy Modal Button Overrides */
+.privacy-consent-modal .privacy-btn {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-height: 48px;
+}
+
+.privacy-consent-modal .privacy-btn-accept {
+    border: 2px solid #8B9DC3;
+}
+
+.privacy-consent-modal .privacy-btn-accept:hover {
+    background: #7B8DB3;
+    border-color: #7B8DB3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 157, 195, 0.4);
+}
+
+.privacy-consent-modal .privacy-btn-decline {
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.privacy-consent-modal .privacy-btn-decline:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* Privacy Banner Styles */
 .privacy-banner {
     position: fixed;
