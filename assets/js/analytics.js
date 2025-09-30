@@ -31,20 +31,28 @@ const AnalyticsManager = {
         const script = document.createElement('script');
         script.async = true;
         script.src = `https://www.googletagmanager.com/gtag/js?id=${this.config.trackingId}`;
-        document.head.appendChild(script);
         
+        // Wait for script to load before setting up event tracking
+        script.onload = () => {
+            this.setupEventTracking();
+        };
+        
+        document.head.appendChild(script);
         this.isLoaded = true;
-        this.setupEventTracking();
     },
 
     // Track custom events
     trackEvent(eventName, eventAction = 'cta_click', customParams = {}) {
         if (window.gtag && typeof window.gtag === 'function') {
+            // Safely get user detection data with fallbacks
+            const userType = window.UserDetection ? window.UserDetection.getUserType() : 'unknown';
+            const trafficSource = window.UserDetection ? window.UserDetection.getTrafficSource() : 'unknown';
+            
             gtag('event', eventName, {
                 'event_category': 'engagement',
                 'action': eventAction,
-                'user_type': UserDetection.getUserType(),
-                'traffic_source': UserDetection.getTrafficSource(),
+                'user_type': userType,
+                'traffic_source': trafficSource,
                 ...customParams
             });
         }
@@ -53,12 +61,16 @@ const AnalyticsManager = {
     // Track conversions for Google Ads
     trackConversion(conversionLabel, value = 1) {
         if (window.gtag && typeof window.gtag === 'function') {
+            // Safely get user detection data with fallbacks
+            const userType = window.UserDetection ? window.UserDetection.getUserType() : 'unknown';
+            const trafficSource = window.UserDetection ? window.UserDetection.getTrafficSource() : 'unknown';
+            
             gtag('event', 'conversion', {
                 'send_to': `${this.config.trackingId}/${conversionLabel}`,
                 'value': value,
                 'currency': 'GBP',
-                'user_type': UserDetection.getUserType(),
-                'traffic_source': UserDetection.getTrafficSource()
+                'user_type': userType,
+                'traffic_source': trafficSource
             });
         }
     },
