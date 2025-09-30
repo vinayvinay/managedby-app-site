@@ -33,14 +33,22 @@ const AnalyticsManager = {
 
     // Track custom events
     trackEvent(eventName, eventAction = 'cta_click', customParams = {}) {
+        console.log('🎯 trackEvent called:', eventName, eventAction, customParams);
+        console.log('🎯 gtag available:', !!(window.gtag && typeof window.gtag === 'function'));
+        console.log('🎯 AnalyticsManager.isLoaded:', this.isLoaded);
+        
         if (window.gtag && typeof window.gtag === 'function') {
-            gtag('event', eventName, {
+            const eventData = {
                 'event_category': 'engagement',
                 'action': eventAction,
                 'user_type': UserDetection.getUserType(),
                 'traffic_source': UserDetection.getTrafficSource(),
                 ...customParams
-            });
+            };
+            gtag('event', eventName, eventData);
+            console.log('🎯 GA Event sent:', eventName, eventData);
+        } else {
+            console.log('❌ GA not ready, event not sent');
         }
     },
 
