@@ -25,10 +25,15 @@ const AnalyticsManager = {
         const script = document.createElement('script');
         script.async = true;
         script.src = `https://www.googletagmanager.com/gtag/js?id=${this.config.trackingId}`;
-        document.head.appendChild(script);
         
+        // Wait for script to load before setting up tracking
+        script.onload = () => {
+            console.log('🎯 GA Script loaded, setting up tracking');
+            this.setupEventTracking();
+        };
+        
+        document.head.appendChild(script);
         this.isLoaded = true;
-        this.setupEventTracking();
     },
 
     // Track custom events
@@ -45,8 +50,12 @@ const AnalyticsManager = {
                 'traffic_source': UserDetection.getTrafficSource(),
                 ...customParams
             };
-            gtag('event', eventName, eventData);
-            console.log('🎯 GA Event sent:', eventName, eventData);
+            
+            // Use a small delay to ensure GA is fully ready
+            setTimeout(() => {
+                gtag('event', eventName, eventData);
+                console.log('🎯 GA Event sent (delayed):', eventName, eventData);
+            }, 100);
         } else {
             console.log('❌ GA not ready, event not sent');
         }
