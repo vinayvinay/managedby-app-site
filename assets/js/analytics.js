@@ -13,12 +13,16 @@ const AnalyticsManager = {
 
     // Initialize Google Analytics
     init() {
+        console.log('🔥 AnalyticsManager.init() called. isLoaded:', this.isLoaded);
+        
         if (this.isLoaded) return;
         
         // Set up dataLayer first
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         window.gtag = gtag;
+        
+        console.log('🔥 Setting up gtag and dataLayer');
         
         // Initialize with current timestamp
         gtag('js', new Date());
@@ -27,14 +31,23 @@ const AnalyticsManager = {
             page_location: window.location.href
         });
         
+        console.log('🔥 GA config sent');
+        
         // Load GA script
         const script = document.createElement('script');
         script.async = true;
         script.src = `https://www.googletagmanager.com/gtag/js?id=${this.config.trackingId}`;
         
+        console.log('🔥 Loading GA script:', script.src);
+        
         // Wait for script to load before setting up event tracking
         script.onload = () => {
+            console.log('🔥 GA script loaded, setting up event tracking');
             this.setupEventTracking();
+        };
+        
+        script.onerror = () => {
+            console.error('🔥 Failed to load GA script');
         };
         
         document.head.appendChild(script);
@@ -43,18 +56,26 @@ const AnalyticsManager = {
 
     // Track custom events
     trackEvent(eventName, eventAction = 'cta_click', customParams = {}) {
+        console.log('🔥 trackEvent called:', eventName, eventAction, customParams);
+        console.log('🔥 gtag available:', !!window.gtag, typeof window.gtag);
+        
         if (window.gtag && typeof window.gtag === 'function') {
             // Safely get user detection data with fallbacks
             const userType = window.UserDetection ? window.UserDetection.getUserType() : 'unknown';
             const trafficSource = window.UserDetection ? window.UserDetection.getTrafficSource() : 'unknown';
             
-            gtag('event', eventName, {
+            const eventData = {
                 'event_category': 'engagement',
                 'action': eventAction,
                 'user_type': userType,
                 'traffic_source': trafficSource,
                 ...customParams
-            });
+            };
+            
+            console.log('🔥 Sending GA event:', eventName, eventData);
+            gtag('event', eventName, eventData);
+        } else {
+            console.log('🔥 gtag not available, event not sent');
         }
     },
 
@@ -77,6 +98,8 @@ const AnalyticsManager = {
 
     // Set up event tracking for CTA elements
     setupEventTracking() {
+        console.log('🔥 Setting up event tracking...');
+        
         const ctaSelectors = [
             { selector: 'a[href*="wa.me"]', label: 'whatsapp' },
             { selector: 'a[href*="calendly"]', label: 'calendly' },
@@ -84,8 +107,14 @@ const AnalyticsManager = {
         ];
 
         ctaSelectors.forEach(cta => {
-            document.querySelectorAll(cta.selector).forEach(element => {
+            const elements = document.querySelectorAll(cta.selector);
+            console.log(`🔥 Found ${elements.length} elements for ${cta.selector}`);
+            
+            elements.forEach(element => {
+                console.log('🔥 Adding click listener to:', element);
                 element.addEventListener('click', () => {
+                    console.log('🔥 CTA clicked:', cta.label, element);
+                    
                     // Get location from data attribute or fallback to DOM lookup
                     const location = element.dataset.location || this.getLocation(element);
                     
