@@ -14,9 +14,7 @@ const PrivacyManager = {
     
     // Load analytics only if consent given
     loadAnalytics() {
-        console.log('🔥 loadAnalytics called. Consent:', this.hasAnalyticsConsent(), 'Manager available:', !!window.AnalyticsManager);
         if (this.hasAnalyticsConsent() && window.AnalyticsManager) {
-            console.log('🔥 Initializing AnalyticsManager...');
             window.AnalyticsManager.init();
         }
     },
@@ -70,10 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize privacy manager first
-    console.log('🔥 Initializing PrivacyManager...');
     PrivacyManager.init();
-    console.log('🔥 PrivacyManager initialized. Analytics consent:', PrivacyManager.hasAnalyticsConsent());
-    console.log('🔥 AnalyticsManager available:', !!window.AnalyticsManager);
     
     // Initialize hero text animation
     HeroAnimationManager.init(showPrivacyConsentModal);
@@ -89,16 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
         init() {
             // Contact modal - handle both the original button and new CTA buttons
             document.getElementById('open-modal').addEventListener('click', () => {
-                console.log('🔥 Main CTA button clicked');
-                
                 // Track the main CTA click
                 if (window.AnalyticsManager) {
-                    console.log('🔥 AnalyticsManager available, tracking main CTA');
                     window.AnalyticsManager.trackEvent('cta_click', 'click', { 
                         click_location: 'get_started' 
                     });
-                } else {
-                    console.log('🔥 AnalyticsManager not available');
                 }
                 this.openContact('get_started');
             });
@@ -106,8 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Handle all CTA buttons with class 'open-modal-btn'
             document.querySelectorAll('.open-modal-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    console.log('🔥 Modal CTA button clicked:', btn);
-                    
                     // Track which CTA was clicked based on its location
                     let ctaLocation = 'unknown';
                     const heroSection = document.getElementById('hero-section');
@@ -122,16 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         ctaLocation = 'pricing';
                     }
                     
-                    console.log('🔥 CTA location detected:', ctaLocation);
-                    
                     // Track the specific CTA click
                     if (window.AnalyticsManager) {
-                        console.log('🔥 AnalyticsManager available, tracking modal CTA');
                         window.AnalyticsManager.trackEvent('cta_click', 'click', { 
                             click_location: ctaLocation 
                         });
-                    } else {
-                        console.log('🔥 AnalyticsManager not available');
                     }
                     
                     this.openContact(ctaLocation);
