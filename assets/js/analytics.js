@@ -47,11 +47,27 @@ const AnalyticsManager = {
             // Test basic event to verify GA4 is working
             setTimeout(() => {
                 console.log('🔥 Sending test event to verify GA4');
+                
+                // Check if GA collect endpoint is reachable
+                fetch('https://www.google-analytics.com/g/collect?v=2&tid=' + this.config.trackingId + '&t=pageview&dl=' + encodeURIComponent(location.href), {
+                    method: 'GET',
+                    mode: 'no-cors'
+                }).then(() => {
+                    console.log('🔥 GA collect endpoint reachable');
+                }).catch(err => {
+                    console.log('🔥 GA collect endpoint blocked or failed:', err);
+                });
+                
                 gtag('event', 'page_view_test', {
                     'event_category': 'test',
                     'test_param': 'test_value'
                 });
                 console.log('🔥 Test event sent');
+                
+                // Also check what's in dataLayer after test event
+                setTimeout(() => {
+                    console.log('🔥 Full dataLayer:', window.dataLayer);
+                }, 500);
             }, 1000);
             
             this.setupEventTracking();
@@ -92,6 +108,14 @@ const AnalyticsManager = {
             
             // Log dataLayer to see what's actually being sent
             console.log('🔥 dataLayer after event:', window.dataLayer.slice(-3));
+            
+            // Check if GA script actually loaded by looking for specific GA functions
+            console.log('🔥 GA functions available:', {
+                gtag: typeof window.gtag,
+                dataLayer: !!window.dataLayer,
+                gtagLoaded: typeof window.gtagLoaded,
+                ga: typeof window.ga
+            });
         } else {
             console.log('🔥 gtag not available, event not sent');
         }
