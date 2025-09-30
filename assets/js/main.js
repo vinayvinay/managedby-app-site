@@ -126,11 +126,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (e.target === this.contactModal) this.closeContact();
             });
             
-            // Privacy modal
-            document.getElementById('open-privacy-modal').addEventListener('click', (e) => {
-                e.preventDefault();
-                this.openPrivacy();
-            });
+            // Privacy modal (only if element exists)
+            const openPrivacyModal = document.getElementById('open-privacy-modal');
+            if (openPrivacyModal) {
+                openPrivacyModal.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.openPrivacy();
+                });
+            }
             
             document.getElementById('close-privacy-modal').addEventListener('click', () => this.closePrivacy());
             this.privacyModal.addEventListener('click', (e) => {
