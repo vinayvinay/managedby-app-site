@@ -42,16 +42,10 @@ const AnalyticsManager = {
     },
 
     // Track custom events
-    trackEvent(eventName, eventAction = 'cta_click', customParams = {}) {
+    trackEvent(eventName, customParams = {}) {
         if (window.gtag && typeof window.gtag === 'function') {
-            // Safely get user detection data with fallbacks
-            const userType = window.UserDetection ? window.UserDetection.getUserType() : 'unknown';
-            const trafficSource = window.UserDetection ? window.UserDetection.getTrafficSource() : 'unknown';
-            
             gtag('event', eventName, {
                 'event_category': 'engagement',
-                'custom_user_type': userType,
-                'custom_traffic_source': trafficSource,
                 ...customParams
             });
         }
@@ -60,16 +54,10 @@ const AnalyticsManager = {
     // Track conversions for Google Ads
     trackConversion(conversionLabel, value = 1) {
         if (window.gtag && typeof window.gtag === 'function') {
-            // Safely get user detection data with fallbacks
-            const userType = window.UserDetection ? window.UserDetection.getUserType() : 'unknown';
-            const trafficSource = window.UserDetection ? window.UserDetection.getTrafficSource() : 'unknown';
-            
             gtag('event', 'conversion', {
                 'send_to': `${this.config.trackingId}/${conversionLabel}`,
                 'value': value,
-                'currency': 'GBP',
-                'user_type': userType,
-                'traffic_source': trafficSource
+                'currency': 'GBP'
             });
         }
     },
@@ -89,7 +77,7 @@ const AnalyticsManager = {
                     const location = element.dataset.location || this.getLocation(element);
                     
                     // Track event with location as custom parameter
-                    this.trackEvent(cta.label, 'click', { 
+                    this.trackEvent(cta.label, { 
                         click_location: location 
                     });
                     
@@ -125,7 +113,7 @@ const AnalyticsManager = {
                 } else if (sectionTimes[sectionId]) {
                     const timeSpent = Date.now() - sectionTimes[sectionId];
                     if (timeSpent > 1000) { // Only track if spent more than 1 second
-                        self.trackEvent('section_engagement', 'engagement', {
+                        self.trackEvent('section_engagement', {
                             section_name: sectionId,
                             time_spent_seconds: Math.round(timeSpent / 1000)
                         });

@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('open-modal').addEventListener('click', () => {
                 // Track the main CTA click
                 if (window.AnalyticsManager) {
-                    window.AnalyticsManager.trackEvent('cta_click', 'click', { 
+                    window.AnalyticsManager.trackEvent('cta_click', { 
                         click_location: 'get_started' 
                     });
                 }
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Track the specific CTA click
                     if (window.AnalyticsManager) {
-                        window.AnalyticsManager.trackEvent('cta_click', 'click', { 
+                        window.AnalyticsManager.trackEvent('cta_click', { 
                             click_location: ctaLocation 
                         });
                     }
