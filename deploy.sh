@@ -24,8 +24,10 @@ npx terser assets/js/tailwind-config.js -o dist/assets/js/tailwind-config.min.js
 [ -f robots.txt ] && cp robots.txt dist/
 [ -f sitemap.xml ] && cp sitemap.xml dist/
 
-# Generate HTML with proper script order
+# Generate HTML files with proper script order
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
+
+# Build index.html (3% version)
 # First pass: update asset references and timestamps
 sed \
     -e "s/styles\.css/styles.min.css/g" \
@@ -40,8 +42,24 @@ sed \
     -e "/stage-selector\.js/d" \
     -e "s/main\.js/bundle.min.js/g" > dist/index.html
 
-# Minify the HTML
+# Build index-6.html (6% version)
+# First pass: update asset references and timestamps
+sed \
+    -e "s/styles\.css/styles.min.css/g" \
+    -e "s/tailwind-config\.js/tailwind-config.min.js/g" \
+    -e "s/?v=[0-9]*/?v=$TIMESTAMP/g" \
+    index-6.html | \
+# Second pass: remove individual JS files from head and replace main.js with bundle at end
+sed \
+    -e "/user-detection\.js/d" \
+    -e "/analytics\.js/d" \
+    -e "/hero-animation\.js/d" \
+    -e "/stage-selector\.js/d" \
+    -e "s/main\.js/bundle.min.js/g" > dist/index-6.html
+
+# Minify the HTML files
 npx html-minifier dist/index.html -o dist/index.html --collapse-whitespace --remove-comments
+npx html-minifier dist/index-6.html -o dist/index-6.html --collapse-whitespace --remove-comments
 
 # Smoke test
 echo "🧪 Running smoke test..."
