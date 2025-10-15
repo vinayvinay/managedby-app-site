@@ -488,5 +488,19 @@
 
     <!-- Main JavaScript -->
     <script src="assets/js/main.js?v=20250915"></script>
+    
+    <!-- Override for 3% pricing calculations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override the updatePrices function to use 3% calculations
+            window.updatePrices = window.updatePrices3Percent;
+            
+            // Re-initialize slider if it exists
+            const rentSlider = document.getElementById('rent-slider');
+            if (rentSlider) {
+                updatePrices(parseInt(rentSlider.value));
+            }
+        });
+    </script>
 </body>
 </html>

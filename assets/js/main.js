@@ -192,7 +192,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const traditionalPrice = document.getElementById('traditional-price');
     const annualSaving = document.getElementById('annual-saving');
     
-    function updatePrices(rentAmount) {
+    function updatePrices3Percent(rentAmount) {
+        // Update rent display
+        if (rentValue) {
+            rentValue.textContent = `£${rentAmount.toLocaleString()}`;
+        }
+        
+        // Calculate our price (3.6% including VAT)
+        const ourMonthlyPrice = Math.round(rentAmount * 0.036);
+        if (ourPrice) {
+            ourPrice.textContent = `£${ourMonthlyPrice}`;
+        }
+        
+        // Calculate traditional range (10-15%)
+        const traditionalMin = Math.round(rentAmount * 0.10);
+        const traditionalMax = Math.round(rentAmount * 0.15);
+        if (traditionalPrice) {
+            traditionalPrice.textContent = `£${traditionalMin}-£${traditionalMax}`;
+        }
+        
+        // Calculate annual savings range
+        const annualSavingsMin = (traditionalMin - ourMonthlyPrice) * 12;
+        const annualSavingsMax = (traditionalMax - ourMonthlyPrice) * 12;
+        if (annualSaving) {
+            annualSaving.textContent = `Your annual saving: £${annualSavingsMin.toLocaleString()}-£${annualSavingsMax.toLocaleString()}.`;
+        }
+    }
+
+    function updatePrices6Percent(rentAmount) {
         // Update rent display
         if (rentValue) {
             rentValue.textContent = `£${rentAmount.toLocaleString()}`;
@@ -218,6 +245,13 @@ document.addEventListener('DOMContentLoaded', function() {
             annualSaving.textContent = `Your annual saving: £${annualSavingsMin.toLocaleString()}-£${annualSavingsMax.toLocaleString()}.`;
         }
     }
+
+    // Default to 6% for backward compatibility
+    const updatePrices = updatePrices6Percent;
+    
+    // Expose functions globally for A/B testing
+    window.updatePrices3Percent = updatePrices3Percent;
+    window.updatePrices6Percent = updatePrices6Percent;
     
     if (rentSlider) {
         // Initialize with default value
