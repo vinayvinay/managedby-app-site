@@ -204,9 +204,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ourPrice.textContent = `£${ourMonthlyPrice}`;
         }
         
-        // Calculate traditional range (10-15%)
-        const traditionalMin = Math.round(rentAmount * 0.10);
-        const traditionalMax = Math.round(rentAmount * 0.15);
+        // Calculate traditional range (12-16%)
+        const traditionalMin = Math.round(rentAmount * 0.12);
+        const traditionalMax = Math.round(rentAmount * 0.16);
         if (traditionalPrice) {
             traditionalPrice.textContent = `£${traditionalMin}-£${traditionalMax}`;
         }
