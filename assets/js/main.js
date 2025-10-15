@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
             rentValue.textContent = `£${rentAmount.toLocaleString()}`;
         }
         
-        // Calculate our price (3.6% including VAT)
-        const ourMonthlyPrice = Math.round(rentAmount * 0.036);
+        // Calculate our price (7.2% including VAT)
+        const ourMonthlyPrice = Math.round(rentAmount * 0.072);
         if (ourPrice) {
             ourPrice.textContent = `£${ourMonthlyPrice}`;
         }
