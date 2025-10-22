@@ -49,9 +49,10 @@ async function smokeTest() {
       throw new Error('Hero section not found');
     }
     
-    // Test 3: Check main headline
+    // Test 3: Check main headline and subtitle
     const headline = await page.$eval('.hero-headline', el => el.textContent);
-    if (!headline.includes('6%')) {
+    const subtitle = await page.$eval('.hero-subtitle', el => el.textContent);
+    if (!headline.includes('Property Management') || !subtitle.includes('6%')) {
       throw new Error('Main headline missing or incorrect');
     }
     
