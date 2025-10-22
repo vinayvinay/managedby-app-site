@@ -16,8 +16,8 @@ rm -rf dist && mkdir -p dist/assets/{css,js,images}
 # Copy & process assets
 cp -r assets/images/* dist/assets/images/
 npx cleancss assets/css/styles.css -o dist/assets/css/styles.min.css
-cat assets/js/{user-detection,analytics,hero-animation,stage-selector,main}.js | npx terser -o dist/assets/js/bundle.min.js
-npx terser assets/js/tailwind-config.js -o dist/assets/js/tailwind-config.min.js
+npx cleancss assets/css/tailwind.css -o dist/assets/css/tailwind.min.css
+cat assets/js/{analytics,hero-animation,stage-selector,main}.js | npx terser -o dist/assets/js/bundle.min.js
 
 # Copy static files
 [ -f 404.html ] && cp 404.html dist/
@@ -27,39 +27,22 @@ npx terser assets/js/tailwind-config.js -o dist/assets/js/tailwind-config.min.js
 # Generate HTML files with proper script order
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
-# Build index.html (3% version)
+# Build index.html
 # First pass: update asset references and timestamps
 sed \
     -e "s/styles\.css/styles.min.css/g" \
-    -e "s/tailwind-config\.js/tailwind-config.min.js/g" \
+    -e "s/tailwind\.css/tailwind.min.css/g" \
     -e "s/?v=[0-9]*/?v=$TIMESTAMP/g" \
     index.html | \
 # Second pass: remove individual JS files from head and replace main.js with bundle at end
 sed \
-    -e "/user-detection\.js/d" \
     -e "/analytics\.js/d" \
     -e "/hero-animation\.js/d" \
     -e "/stage-selector\.js/d" \
     -e "s/main\.js/bundle.min.js/g" > dist/index.html
 
-# Build index-6.html (6% version)
-# First pass: update asset references and timestamps
-sed \
-    -e "s/styles\.css/styles.min.css/g" \
-    -e "s/tailwind-config\.js/tailwind-config.min.js/g" \
-    -e "s/?v=[0-9]*/?v=$TIMESTAMP/g" \
-    index-6.html | \
-# Second pass: remove individual JS files from head and replace main.js with bundle at end
-sed \
-    -e "/user-detection\.js/d" \
-    -e "/analytics\.js/d" \
-    -e "/hero-animation\.js/d" \
-    -e "/stage-selector\.js/d" \
-    -e "s/main\.js/bundle.min.js/g" > dist/index-6.html
-
-# Minify the HTML files
+# Minify the HTML file
 npx html-minifier dist/index.html -o dist/index.html --collapse-whitespace --remove-comments
-npx html-minifier dist/index-6.html -o dist/index-6.html --collapse-whitespace --remove-comments
 
 # Smoke test
 echo "🧪 Running smoke test..."
