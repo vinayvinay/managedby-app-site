@@ -19,7 +19,9 @@
       "WebSearch",
       "Bash(git revert:*)",
       "Bash(sips:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(git restore:*)",
+      "Bash(open:*)"
     ],
     "deny": [],
     "ask": []

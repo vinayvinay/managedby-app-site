@@ -4,6 +4,8 @@
 const AnalyticsManager = {
     config: {
         trackingId: 'G-XPDJ9JE23Z',
+        // Note: For Google Ads conversions, you need format: 'AW-CONVERSION_ID/LABEL'
+        // Current format is for demo purposes only
         conversionLabels: {
             lead_generation: 'lead_generation'
         }
@@ -35,6 +37,11 @@ const AnalyticsManager = {
         // Wait for script to load before setting up event tracking
         script.onload = () => {
             this.setupEventTracking();
+        };
+        
+        // Handle script load errors
+        script.onerror = () => {
+            console.warn('Google Analytics failed to load');
         };
         
         document.head.appendChild(script);

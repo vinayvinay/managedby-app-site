@@ -48,24 +48,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Privacy consent button handlers
-    const acceptBtn = document.querySelector('.privacy-btn-accept');
-    const declineBtn = document.querySelector('.privacy-btn-decline');
-    
-    if (acceptBtn) {
-        acceptBtn.addEventListener('click', function() {
+    // Privacy consent button handlers using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('privacy-btn-accept')) {
             PrivacyManager.saveConsent('accepted');
             PrivacyManager.loadAnalytics();
             hidePrivacyConsentModal();
-        });
-    }
-    
-    if (declineBtn) {
-        declineBtn.addEventListener('click', function() {
+        }
+        
+        if (e.target && e.target.classList.contains('privacy-btn-decline')) {
             PrivacyManager.saveConsent('declined');
             hidePrivacyConsentModal();
-        });
-    }
+        }
+    });
     
     // Initialize privacy manager first
     PrivacyManager.init();
@@ -192,32 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const traditionalPrice = document.getElementById('traditional-price');
     const annualSaving = document.getElementById('annual-saving');
     
-    function updatePrices3Percent(rentAmount) {
-        // Update rent display
-        if (rentValue) {
-            rentValue.textContent = `£${rentAmount.toLocaleString()}`;
-        }
-        
-        // Calculate our price (3.6% including VAT)
-        const ourMonthlyPrice = Math.round(rentAmount * 0.036);
-        if (ourPrice) {
-            ourPrice.textContent = `£${ourMonthlyPrice}`;
-        }
-        
-        // Calculate traditional range (10-15% + VAT)
-        const traditionalMin = Math.round(rentAmount * 0.10 * 1.2);
-        const traditionalMax = Math.round(rentAmount * 0.15 * 1.2);
-        if (traditionalPrice) {
-            traditionalPrice.textContent = `£${traditionalMin}-£${traditionalMax}`;
-        }
-        
-        // Calculate annual savings range
-        const annualSavingsMin = (traditionalMin - ourMonthlyPrice) * 12;
-        const annualSavingsMax = (traditionalMax - ourMonthlyPrice) * 12;
-        if (annualSaving) {
-            annualSaving.textContent = `Your annual saving: £${annualSavingsMin.toLocaleString()}-£${annualSavingsMax.toLocaleString()}.`;
-        }
-    }
 
     function updatePrices6Percent(rentAmount) {
         // Update rent display
@@ -246,11 +215,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Default to 6% for backward compatibility
+    // Use 6% pricing function
     const updatePrices = updatePrices6Percent;
     
-    // Expose functions globally for A/B testing
-    window.updatePrices3Percent = updatePrices3Percent;
+    // Expose function globally if needed
     window.updatePrices6Percent = updatePrices6Percent;
     
     if (rentSlider) {
