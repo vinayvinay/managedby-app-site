@@ -20,9 +20,10 @@ npx cleancss assets/css/tailwind.css -o dist/assets/css/tailwind.min.css
 cat assets/js/{analytics,hero-animation,stage-selector,main}.js | npx terser -o dist/assets/js/bundle.min.js
 
 # Copy static files
-[ -f 404.html ] && cp 404.html dist/
 [ -f robots.txt ] && cp robots.txt dist/
 [ -f sitemap.xml ] && cp sitemap.xml dist/
+[ -f _headers ] && cp _headers dist/
+[ -f _redirects ] && cp _redirects dist/
 
 # Generate HTML files with proper script order
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
